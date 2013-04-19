@@ -27,23 +27,24 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0
 		var index;
 		var stream, times;
 		var sortedBuffers;
-		stream = Pbrown( 0, (evt.buffers.size-1).asInt, 15, inf ).round(1).asStream;
+		stream = Pbrown( 0, (evt.buffers.size-1).asInt, 10, inf ).asStream;
 		sortedBuffers = [ evt.freqs, evt.buffers ].flop.sort({ |a,b| a[0] <= b[0] }).flop[1];
+		times = (Pbrown(0.0,1.0,0.1,inf).linlin(0,1,0.05,0.5) * Pwhite(0.9,1.1,inf)).asStream;
 		//stream = Pseq( [ Pseries(0, 1, evt.buffers.size ) ], inf ).asStream;
 		//times = Pwrand( [ Pseq([0.05,0.05,0.05,0.05],1), 0.1 ], [0.1, 0.9 ], inf ).asStream;
 		// stream = PintL( Pwhite(0, evt.buffers.size.asInt, inf ), 0.05 ).round(1).asStream;
 		loop {
 			index = stream.next;
 			Synth.sched( 0.2, "shesme_tttt", [ 	
-				\bufnum, evt.sortedBuffers[ index ], 
+				\bufnum, sortedBuffers[ index ], 
 				\amp, 0.1/evt.peaks[evt.buffers.indexOf( sortedBuffers[ index ] )],
-				\pan, 0.125.rand2,
+				\pan, 0.5.rand2,
 				\offset, evt.peakTimes[evt.buffers.indexOf( sortedBuffers[ index ] )],
 				\rate, evt.freqs.mean / evt.freqs[
-					evt.buffers.indexOf( evt.sortedBuffers[ index ] )
+					evt.buffers.indexOf( sortedBuffers[ index ] )
 				]
 			]);
-			(0.05 rrand: 0.1).wait;
+			times.next.wait;
 		};
 	}.fork;
 };
@@ -55,6 +56,8 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0
 };
 
 /*
+
+~shesme.tttt.loadBuffers;
 
 ~shesme.tttt.start;
 
