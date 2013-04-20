@@ -4,7 +4,7 @@
 ~shesme.spiegel = ~shesme.spiegel ? EM();
 
 ~shesme.spiegel.loadBuffers = { |evt, action|
-	evt.buffers = Buffer.readDir( "/Users/woutersnoei/Dropbox/Work/shesme/samples/spiegel", 
+	evt.buffers = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/spiegel", 
 		action: action );
 };
 

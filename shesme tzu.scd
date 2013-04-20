@@ -12,7 +12,7 @@
 });
 
 ~shesme.tzu.loadBuffers = { |evt, action|
-	evt.buffers = Buffer.readDir( "/Users/woutersnoei/Dropbox/Work/shesme/samples/tzu", 
+	evt.buffers = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/tzu", 
 		action: action ); 
 };
 

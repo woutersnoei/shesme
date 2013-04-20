@@ -7,17 +7,17 @@
 	{
 		var cond;
 		cond = Condition(false);
-		evt.s_bufs = Buffer.readDir( "/Users/woutersnoei/Dropbox/Work/shesme/samples/ssss",
+		evt.s_bufs = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/ssss",
 			action: { cond.test = true; cond.signal; }
 		);
 		cond.wait;
 		cond.test = false;
-		evt.f_bufs = Buffer.readDir( "/Users/woutersnoei/Dropbox/Work/shesme/samples/ffff",
+		evt.f_bufs = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/ffff",
 			action: { cond.test = true; cond.signal; }
 		);
 		cond.wait;
 		cond.test = false;
-		evt.r_bufs = Buffer.readDir( "/Users/woutersnoei/Dropbox/Work/shesme/samples/voiceless_r",
+		evt.r_bufs = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/voiceless_r",
 			action: { cond.test = true; cond.signal; }
 		);
 		cond.wait;

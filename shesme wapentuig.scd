@@ -4,7 +4,7 @@
 ~shesme.wapentuig = ~shesme.wapentuig ? EM();
 
 ~shesme.wapentuig.loadBuffers = { |evt, action|
-	evt.buffers = Buffer.readDir("/Users/woutersnoei/Dropbox/Work/shesme/samples/wapentuig", nil, 
+	evt.buffers = Buffer.readDir(thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/wapentuig", nil, 
 		"aiff", action: action );
 };
 

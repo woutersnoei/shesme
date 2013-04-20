@@ -7,10 +7,13 @@
 
 ~shesme.gedicht.loadBuffers = { |evt, action| action.value };
 
+~shesme.gedicht.paths = (
+	nl: thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/gedicht/en",
+	en: thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/gedicht/nl"
+);
+
 ~shesme.gedicht.makeScore = { |evt|
-	var en, nl, voices, z=0, waitPoints;
-	en = "/Users/woutersnoei/Dropbox/Work/shesme/samples/gedicht/en";
-	nl = "/Users/woutersnoei/Dropbox/Work/shesme/samples/gedicht/nl";
+	var voices, z=0, waitPoints;
 	voices = [ "bauwien", "elsbeth", "jennifer", "marine", "michaela" ];
 	waitPoints = [ 6, 10, 14, 18, 21, 25, 30, 32, 36, 39, 43, 49 ] - 2;
 	evt.score = UScore(
@@ -18,12 +21,14 @@
 			var chains;
 			chains = [  UChain( i * 2,
 					[ \bufSoundFile, 
-						[ \soundFile, en +/+ voices.choose +/+ (i+1).asStringToBase(10,2) ++ ".wav" ] ],
+						[ \soundFile, evt.paths.en +/+ voices.choose +/+ 
+							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
 					\output
 				).gain_(-12).useSndFileDur,
 				UChain( i * 2, 1, 
 					[ \bufSoundFile, 
-						[ \soundFile, nl +/+  voices.choose +/+ (i+1).asStringToBase(10,2) ++ ".wav" ] ],
+						[ \soundFile, evt.paths.nl +/+ voices.choose +/+ 
+							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
 					[ \output, [ \bus, 1 ] ]
 				).gain_(-12).useSndFileDur,
 			];

@@ -11,7 +11,7 @@
 };
 
 ~shesme.broken.loadBuffers = { |evt, action|
-	evt.buffers = Buffer.readDir( "/Users/woutersnoei/Dropbox/Work/shesme/samples/broken", 
+	evt.buffers = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/broken", 
 		action: action );
 };
 

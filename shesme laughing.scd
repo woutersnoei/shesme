@@ -4,7 +4,7 @@
 ~shesme.laughing = ~shesme.laughing ? EM();
 
 ~shesme.laughing.loadBuffers = { |evt, action|
-	evt.buffers = Buffer.readDir("/Users/woutersnoei/Dropbox/Work/shesme/samples/laughing", 
+	evt.buffers = Buffer.readDir(thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/laughing", 
 		action: action );
 };
 

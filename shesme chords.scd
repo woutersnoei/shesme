@@ -9,13 +9,13 @@
 	{	
 		var cond;
 		cond = Condition(false);
-		"/Users/woutersnoei/Dropbox/Work/shesme/samples/chords/*".pathMatch.do({ |item|
+		(thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/chords/*").pathMatch.do({ |item|
 			evt.buffers[ item.basename.asSymbol ] = 
 				Buffer.readDir(item, nil, "wav", action: { cond.test = true; cond.signal });
 			cond.wait;
 			cond.test = false;
 		});
-		"/Users/woutersnoei/Dropbox/Work/shesme/samples/chords_soft/*".pathMatch.do({ |item|
+		(thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/chords_soft/*").pathMatch.do({ |item|
 			evt.buffers_soft[ item.basename.asSymbol ] = 
 				Buffer.readDir(item, nil, "wav", action: { cond.test = true; cond.signal });
 			cond.wait;

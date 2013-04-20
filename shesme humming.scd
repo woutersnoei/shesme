@@ -4,7 +4,7 @@
 ~shesme.humming = ~shesme.humming ? EM();
 
 ~shesme.humming.loadBuffers = { |evt, action|
-	evt.buffers = Buffer.readDir("/Users/woutersnoei/Dropbox/Work/shesme/samples/humming", 
+	evt.buffers = Buffer.readDir(thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/humming", 
 		action: action );
 };
 

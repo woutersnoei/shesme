@@ -15,11 +15,13 @@
 	{
 		var cond;
 		cond = Condition( false );
-		evt.buffers = (
-			"/Users/woutersnoei/Dropbox/Work/shesme/samples/low notes/*.wav".pathMatch ++
-			"/Users/woutersnoei/Dropbox/Work/shesme/samples/midhigh notes/*.wav".pathMatch ++
-			"/Users/woutersnoei/Dropbox/Work/shesme/samples/high notes/*.wav".pathMatch
-		).collect({ |item|
+		evt.buffers = [ 
+			"samples/low notes/*.wav",
+			"samples/midhigh notes/*.wav",
+			"samples/high notes/*.wav"
+		].collect({ |item|
+			(thisProcess.nowExecutingPath.dirname.dirname +/+ item).pathMatch
+		}).flatten(1).collect({ |item|
 			var buf;
 			buf = Buffer.read(s, item, action: { cond.test = true; cond.signal });
 			cond.wait;

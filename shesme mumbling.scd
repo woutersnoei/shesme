@@ -7,7 +7,7 @@
 	{
 		var cond;
 		cond = Condition(false);
-		evt.buffers = "/Users/woutersnoei/Dropbox/Work/shesme/samples/gesprek/gesprek*.wav"
+		evt.buffers = (thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/gesprek/gesprek*.wav")
 			.pathMatch.collect({ |item|
 				var buf;
 				buf = Buffer.read(s, item, action: { cond.test = true; cond.signal } );

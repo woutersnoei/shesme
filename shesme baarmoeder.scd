@@ -6,7 +6,7 @@
 ~shesme.baarmoeder.amp = 0.1;
 
 
-~shesme.baarmoeder.path = "/Users/woutersnoei/Dropbox/Work/shesme/samples/baarmoeder";
+~shesme.baarmoeder.path = thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/baarmoeder";
 
 ~shesme.baarmoeder.loadBuffers = { |evt, action|
 	{

@@ -5,7 +5,7 @@
 
 ~shesme.ikzoekjeniet.loadBuffers = { |evt, action|
 	evt.vrolijkbuf = Buffer.read(s, 
-		"/Users/woutersnoei/Dropbox/Work/shesme/samples/ik_zoek_je_niet/vrolijk.aiff", 
+		thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/ik_zoek_je_niet/vrolijk.aiff", 
 		action: action );
 };
 
