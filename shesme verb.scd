@@ -6,6 +6,13 @@
 //Server.default = Server.local;
 //s = Server.default;
 
+~shesme = ~shesme ? EM();
+~shesme.verb = ~shesme.verb ? EM();
+
+~shesme.verb.start = { |evt| q.verb.start; };
+~shesme.verb.end = { |evt| q.verb.end; };
+~shesme.verb.loadBuffers = { |evt, action| action.value; };
+
 q = q ? EM();
 q.verb = q.verb ? EM();
 
@@ -103,7 +110,8 @@ q.verb.prepare = { |evt, action|
 
 };
 		
-q.verb.start = { |evt|  // doesn't check if already started !!
+q.verb.start = { |evt, endFirst = true|  // doesn't check if already started !!
+	if( endFirst ) { evt.end; };
 	evt.active = 1;
 	evt.sn = Synth( "ws_verb%".format( evt.n ), [
 		 		\amp, evt.amp, 
@@ -121,7 +129,7 @@ q.verb.end = { |evt|
 };
 
 
-q.verb.cmdPeriod = { |evt| if( evt.active == 1 ) { { evt.start }.defer(0.1); } };
+q.verb.cmdPeriod = { |evt| if( evt.active == 1 ) { { evt.start( false ) }.defer(0.1); } };
 	
 CmdPeriod.add( q.verb );
 
@@ -130,8 +138,37 @@ q.verb.w = Window( "verb", Rect(146, 365, 113, 84)).front;
 q.verb.w.addFlowLayout;
 q.verb.views = ();
 
+q.verb.ctrl.remove;
+q.verb.ctrl = SimpleController( q.verb )
+	.put( \active, {
+		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
+			q.verb.views[ \power ].value = q.verb.active;
+		};
+	})
+	.put( \amp, {
+		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
+			q.verb.views[ \amp ].value = q.verb.amp;
+			q.verb.sn.set( \amp, q.verb.amp ); 
+		};
+	})
+	.put( \preDelay, {
+		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
+			q.verb.views[ \preDelay ].value = q.verb.preDelay;
+			q.verb.sn.set( \preDelay, q.verb.preDelay ); 
+		};
+	})
+	.put( \dur, {
+		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
+			q.verb.views[ \dur ].value = q.verb.dur;
+		};
+	});
 
-q.verb.w.onClose = { q.verb.sn.free; q.verb.sn = nil; CmdPeriod.remove( q.verb ); };
+q.verb.w.onClose = { 
+	q.verb.sn.free; 
+	q.verb.sn = nil; 
+	q.verb.ctrl.remove; 
+	CmdPeriod.remove( q.verb ); 
+};
 
 q.verb.views[ \prepare ] = RoundButton( q.verb.w, 70@16 )
 	.states_([[ "prepare" ]])
@@ -146,7 +183,7 @@ q.verb.views[ \power ] = RoundButton( q.verb.w, 16@16 )
 	 		0, { q.verb.end; })
 			});
 			
-q.verb.views[ \amp ] = SmoothSlider(  q.verb.w, 94@16 ).value_( q.verb.amp ? 0.33 )
+q.verb.views[ \amp ] = SmoothSlider(  q.verb.w, 94@16,  ).value_( q.verb.amp ? 0.33 )
 	.action_({ |sl| 
 		q.verb.amp = sl.value;
 		q.verb.sn.set( \amp, q.verb.amp ); 

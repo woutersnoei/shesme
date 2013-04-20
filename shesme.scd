@@ -19,13 +19,10 @@
 	\tttt,
 	\tzu,
 	\wapentuig,
-];
-
-~shesme.loadNames = [ // files that require only loading
 	\verb,
 ];
 
-~shesme.filePaths = (~shesme.names ++ ~shesme.loadNames).collect({ |item|
+~shesme.filePaths = ~shesme.names.collect({ |item|
 	~shesme.path +/+ "shesme" + item ++ ".scd"
 });
 
