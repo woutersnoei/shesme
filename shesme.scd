@@ -69,6 +69,7 @@
 				.border_(1)
 				.background_( Gradient( Color.gray(1), Color.gray(0.8), \v ) )
 				.label_(['power','power'])
+				.value_( (name == "verb").binaryValue )
 				.hiliteColor_( Color.green )
 				.action_({ |bt|
 					switch( bt.value.asInt,
