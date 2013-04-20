@@ -12,8 +12,10 @@
 	\ikzoekjeniet,
 	\laughing,
 	\mumbling,
+	\rrrr,
 	\tttt,
-	\tzu
+	\tzu,
+	\wapentuig,
 ];
 
 ~shesme.names.do({ |item|
