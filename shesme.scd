@@ -13,6 +13,7 @@
 	\laughing,
 	\mumbling,
 	\rrrr,
+	\spiegel,
 	\tttt,
 	\tzu,
 	\wapentuig,
