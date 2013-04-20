@@ -49,21 +49,38 @@
 
 // make window for loading documents
 ~shesme.makeFilesWindow = { |evt|
+	var views;
 	if( evt.filesWindow.notNil && { evt.filesWindow.isClosed.not }) {
 		evt.filesWindow.close;
 	};
 	evt.filesWindow = Window( "shesme files",
-		Rect( 5, 256, 120, 4 + (~shesme.filePaths.size * 20) ) 
+		Rect( 5, 256, 140, 4 + (~shesme.filePaths.size * 20) ) 
 	);
 	evt.filesWindow.front.addFlowLayout;
-	evt.filesViews = ~shesme.filePaths.do({ |item|
-		SmoothButton( evt.filesWindow, 112 @ 16 )
-			.border_(1)
-			.background_( Gradient( Color.gray(1), Color.gray(0.8), \v ) )
-			.radius_(2)
-			.label_( item.basename.split( $  )[1].removeExtension )
-			.action_({ Document.open( item ) })
-			.resize_(2);
+	views = ~shesme.filePaths.do({ |item|
+		var name;
+		name = item.basename.split( $  )[1].removeExtension;
+		[
+			SmoothButton( evt.filesWindow, 112 @ 16 )
+				.border_(1)
+				.background_( Gradient( Color.gray(1), Color.gray(0.8), \v ) )
+				.radius_(2)
+				.label_( name )
+				.action_({ Document.open( item ) })
+				.resize_(2),
+			SmoothButton( evt.filesWindow, 16 @ 16 )
+				.border_(1)
+				.background_( Gradient( Color.gray(1), Color.gray(0.8), \v ) )
+				.label_(['power','power'])
+				.hiliteColor_( Color.green )
+				.action_({ |bt|
+					switch( bt.value.asInt,
+						1, { evt[ name.asSymbol ].start },
+						0, { evt[ name.asSymbol ].end }
+					);
+				})
+				.resize_(2)
+		]	
 	});
 };
 
