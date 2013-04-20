@@ -46,7 +46,7 @@
 			PlayBuf.ar( 1, item, doneAction:2) * 1.4;
 		});
 		amps = LFDNoise3.kr( 0.5.dup(bufs.size) ).exprange( -24.dbamp, 1 );
-		amps = amps / amps.sum * 4;
+		amps = amps / amps.sum * 8;
 		sig = RoundPan.ar( 4, (sig * amps).sum * amp, LFDNoise3.kr( 0.1 ) );
 		Out.ar( 0, sig * Env.cutoff(0.1).kr(2,gate) );
 	}).load(s);
@@ -62,7 +62,7 @@
 			index = evt.buffers.size.asInt.xrand( index );
 			bufs = evt.buffers[index];
 			evt.synths = evt.synths.add(
-				Synth( "shesme_baarmoeder_%".format(bufs.size), [ \bufs, bufs ])
+				Synth( "shesme_baarmoeder_%".format(bufs.size), [ \bufs, bufs, \amp, evt.amp ])
 				.freeAction_({ |synth|
 					evt.synths.remove( synth );
 				})

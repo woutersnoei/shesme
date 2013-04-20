@@ -16,7 +16,7 @@
 SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, rate = #[0.25,1.25], gate = 1|
 	var sig;
 	sig = PlayBufCF.ar( 1, bufnum, Dwhite(0, 1, inf).linexp(0,1,*rate) * Drand([-1,1], inf), 
-		Dwhite(1, 4, inf), Dwhite(0, BufFrames.kr(bufnum)), 1, 1 );
+		Dwhite(1, 4, inf), Dwhite(0, BufFrames.kr(bufnum)), 1, 1 ) * 4;
 	sig = sig ring1: SinOsc.ar( LFDNoise3.kr(0.1).exprange(200,800), 0, 0.33 );
 	sig = BLowCut.ar( sig, LFDNoise3.kr(0.1).exprange( 20, 10000 ), 4 );
 	sig = BHiCut.ar( sig, LFDNoise3.kr(0.1).exprange( 200, 20000 ), 4 );

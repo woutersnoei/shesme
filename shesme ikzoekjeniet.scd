@@ -25,7 +25,7 @@
 (
 SynthDef( "shesme_ikzoekjeniet", { |bufnum = 0, amp = 0.1, gate = 1|
 	var sig, verb;
-	sig = PlayBuf.ar( 8, bufnum, doneAction: 2) * amp;
+	sig = PlayBuf.ar( 8, bufnum, doneAction: 2) * 3 * amp;
 	verb = sig[[6,7]];
 	sig = sig[..5];
 	sig = sig.collect({ |item|

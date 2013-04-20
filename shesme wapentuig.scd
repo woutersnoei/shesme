@@ -26,7 +26,7 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, gate = 1|
 	pos = pos * BufFrames.kr(bufnum);
 	sig = PlayBufCF.ar( 8, bufnum, 1, 
 		Dwhite(0.1,0.3), (Dwhite(-1.5,1.5) * SampleRate.ir) + pos 
-	 );
+	 ) * 3;
 	verb = sig[[6,7]];
 	sig = sig[..5];
 	sig = sig.collect({ |item|
