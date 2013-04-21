@@ -3,7 +3,7 @@
 
 ~shesme.notes = ~shesme.notes ? EM();
 
-[ \amp, 0.1 ].pairsDo({ |key,value|
+[ \amp, 0.1, \fade, 0 ].pairsDo({ |key,value|
 	~shesme.notes[ key ] = value;
 	~shesme.notes[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
@@ -42,6 +42,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, amp = 0.1, pan = 0, gate = 1, 
 	var sig;
 	sig = PlayBuf.ar( 1, bufnum, rate, doneAction: 2 );
 	sig = sig * amp;
+	sig = sig * Env([0,1,1,0], (BufDur.kr(bufnum) / rate) * [fade,2-(fade*2),fade]/2).kr;
 	Out.ar( 0, RoundPan.ar( 4, sig, pan ) * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
@@ -57,6 +58,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, amp = 0.1, pan = 0, gate = 1, 
 					\bufnum, evt.buffers[index], 
 					\rate, (evt.freqs[ index ].cpsmidi.round(1).midicps ) / evt.freqs[ index ],
 					\pan, 0.25.rand2,
+					\fade, evt.fade ? 0,
 					\amp, evt.amp
 				] ).freeAction_({ |synth|
 					 evt.synths.remove( synth );
