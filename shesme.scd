@@ -13,6 +13,7 @@
 	\laughing,
 	\mumbling,
 	\notes,
+	\opnieuw,
 	\rrrr,
 	\sfr,
 	\spiegel,
