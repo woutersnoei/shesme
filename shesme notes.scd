@@ -57,7 +57,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 				Synth( "shesme_note", [ 
 					\bufnum, evt.buffers[index], 
 					\rate, (evt.freqs[ index ].cpsmidi.round(1).midicps ) / evt.freqs[ index ],
-					\pan, 0.25.rand2,
+					\pan, (-0.25 rrand: 0.25),
 					\fade, evt.fade ? 0,
 					\gain,  1 / (evt.peaks[ index ] / evt.peaks.mean),
 					\amp, evt.amp

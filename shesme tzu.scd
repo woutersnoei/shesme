@@ -53,7 +53,7 @@ SynthDef( "shesme_tzu", { |amp = 0.1, gain = 1, pan = 0, rate = 1, dur = 100, bu
 					
 					\amp, (evt.amp ? 0.1),
 					\gain, 1 / (evt.rms[ index ] / evt.rms.mean), 
-					\pan, 0.25.rand2,
+					\pan, -0.25 rrand: 0.25,
 					// \dur, 1,
 					\rate, ((evt.freqs[ index ].cpsmidi.round + 1.rand2).midicps ) /
 						evt.freqs[ index ]
