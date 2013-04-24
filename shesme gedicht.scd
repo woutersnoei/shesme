@@ -23,20 +23,20 @@
 					[ \bufSoundFile, 
 						[ \soundFile, evt.paths.en +/+ voices.choose +/+ 
 							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
-					\output
+					[ \output, [ \bus, 3.rand ] ]
 				).gain_(-12).useSndFileDur,
 				UChain( i * 2, 1, 
 					[ \bufSoundFile, 
 						[ \soundFile, evt.paths.nl +/+ voices.choose +/+ 
 							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
-					[ \output, [ \bus, 1 ] ]
+					[ \output, [ \bus, 3.rand ] ]
 				).gain_(-12).useSndFileDur,
 			];
 			chains.do( _.startTime_( z ) );
 			z = z + 2.max( chains.collect(_.dur).maxItem + 0.5 );
-			/*
+			
 			if( waitPoints.includes( i ) ) {
-				//z = z + ((30 * 60) / waitPoints.size);
+				z = z + ((30 * 60) / waitPoints.size);
 				chains = chains.add( 
 					UMarker(z - 0.1, 2, "pause", { |marker, score| 
 						// pause the score
@@ -44,7 +44,7 @@
 					})
 				);
 			};
-			*/
+			
 			chains;
 		}).flatten(1);
 	).name_( "shesme gedicht" );
