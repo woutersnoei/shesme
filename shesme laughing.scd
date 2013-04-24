@@ -22,7 +22,7 @@
 
 ~shesme.laughing.pos = 0.5;
 ~shesme.laughing.pbrate = 1;
-~shesme.laughing.amp = 0.1;
+~shesme.laughing.amp = 0.3;
 
 (
 SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, amp = 0.1, gate = 1|
