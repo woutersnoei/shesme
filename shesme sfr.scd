@@ -76,7 +76,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, rvar = 0,
 		((WhiteNoise.ar * rvar) + transpose).midiratio,
 		LFDNoise1.kr(0.25).range(*range),
 		4,
-		(WhiteNoise.ar * 0.05) + LFDNoise3.kr(0.25),
+		(WhiteNoise.ar * 0.05) + LFDNoise3.kr(0.125),
 	) / (overlap.sqrt).max(1).lag(1) * amp.lag(1);
 	Out.ar( 0, sig * Env.asr( fadeIn, 1, fadeIn ).kr(2,gate) );
 }).load(s);
