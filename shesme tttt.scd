@@ -8,6 +8,10 @@
 		action: { action.value });
 };
 
+~shesme.tttt.amp = 0.1;
+~shesme.tttt.transpose = 0;
+~shesme.tttt.speed = 1;
+
 (
 SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0|
 	var sig;
@@ -15,7 +19,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0
 		(BufRateScale.kr(bufnum) / rate) * offset * SampleRate.ir, doneAction:2 
 	) * amp;
 	//sig = sig * Env([1,0],[0.1]).ar(2);
-	sig = PanAz.ar( 4, sig, pan );
+	sig = PanAz.ar( 4, BLowCut.ar( sig, 250, 2 ), pan );
 	OffsetOut.ar( 0, sig );
 }).store;
 );
@@ -25,22 +29,23 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0
 	evt.end;
 	evt.task = {
 		var index;
-		var stream, times;
+		var stream, times, pan;
 		var sortedBuffers;
 		stream = Pbrown( 0, (evt.buffers.size-1).asInt, 10, inf ).asStream;
 		sortedBuffers = [ evt.freqs, evt.buffers ].flop.sort({ |a,b| a[0] <= b[0] }).flop[1];
-		times = (Pbrown(0.0,1.0,0.1,inf).linlin(0,1,0.05,0.5) * Pwhite(0.9,1.1,inf)).asStream;
+		times = (Pbrown(0.0,1.0,0.1,inf).linlin(0,1,0.05,1) * Pwhite(0.9,1.1,inf)).asStream;
+		pan = Pwhite(-0.25,0.25,inf).asStream;
 		//stream = Pseq( [ Pseries(0, 1, evt.buffers.size ) ], inf ).asStream;
 		//times = Pwrand( [ Pseq([0.05,0.05,0.05,0.05],1), 0.1 ], [0.1, 0.9 ], inf ).asStream;
 		// stream = PintL( Pwhite(0, evt.buffers.size.asInt, inf ), 0.05 ).round(1).asStream;
 		loop {
-			index = stream.next;
+			index = stream.next * evt.speed;
 			Synth.sched( 0.2, "shesme_tttt", [ 	
 				\bufnum, sortedBuffers[ index ], 
 				\amp, 0.1/evt.peaks[evt.buffers.indexOf( sortedBuffers[ index ] )],
-				\pan, 0.5.rand2,
+				\pan, pan.next, //0.5.rand2,
 				\offset, evt.peakTimes[evt.buffers.indexOf( sortedBuffers[ index ] )],
-				\rate, evt.freqs.mean / evt.freqs[
+				\rate, evt.transpose.midiratio * evt.freqs.mean / evt.freqs[
 					evt.buffers.indexOf( sortedBuffers[ index ] )
 				]
 			]);
