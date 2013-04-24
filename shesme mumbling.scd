@@ -36,7 +36,7 @@
 (
 SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], amp = 0.1, gate = 1|
 		var sig, speed;
-		speed = (LFTri.kr(LFDNoise3.kr(0.1).exprange(0.05,0.4), -0.5 ).range(0,1) ** 3)
+		speed = (LFTri.kr(LFDNoise3.kr(0.1).exprange(0.01,0.1), -0.5 ).range(0,1) ** 3)
 			.linlin(0,1,3,200);
 		sig = buffers.collect({ |buf|
 			GrainBuf.ar(4, Dust.ar( speed ), 0.2, buf, 
