@@ -3,7 +3,7 @@
 
 ~shesme.broken = ~shesme.broken ? EM();
 
-~shesme.broken.pbrate = [0.8, 1.2];
+~shesme.broken.pbrate = [0.5, 1.6];
 
 ~shesme.broken.pbrate = { |evt, new|
 	evt[ \pbrate ] = new;
@@ -21,10 +21,10 @@ SynthDef( "shesme_broken", { |bufnum = 0, amp = 0.1, pbrate = #[0.8,1.2], gate =
 	sig = PlayBufCF.ar( 1, bufnum, Dwhite(0, 1, inf).linexp(0,1,*pbrate) * Drand([-1,1], inf), 
 		Dwhite(2, 5, inf), Dwhite(0, BufFrames.kr(bufnum)), 1, 1 );
 	//sig = sig ring1: SinOsc.ar( LFDNoise3.kr(0.1).exprange(200,800), 0, 0.33 );
-	//sig = BLowCut.ar( sig, LFDNoise3.kr(0.1).exprange( 20, 10000 ), 4 );
+	sig = BLowCut.ar( sig, LFDNoise3.kr(0.2).exprange( 20, 20000 ), 4 );
 	//sig = BHiCut.ar( sig, LFDNoise3.kr(0.1).exprange( 200, 20000 ), 4 );
-	sig = PitchShift.ar(sig * amp, 0.2.dup, 1, 0.01, 0.2);
-	//sig = RoundPan.ar( 4, sig, LFDNoise3.kr(0.1) * 2 );
+	//sig = PitchShift.ar(sig, 0.2.dup, 1, 0.01, 0.2);
+	sig = RoundPan.ar( 4, sig, LFDNoise3.kr(0.1) * 2 ) * amp * 0.25;
 	Out.ar( 0, sig * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
@@ -37,7 +37,7 @@ SynthDef( "shesme_broken", { |bufnum = 0, amp = 0.1, pbrate = #[0.8,1.2], gate =
 };
 
 ~shesme.broken.end = { |evt|
-	evt.synths.do(_.release);
+	evt.synths.do(_.release(2));
 	evt.synths = nil;
 };
 )
