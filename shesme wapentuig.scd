@@ -58,6 +58,7 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, gate = 1|
 ~shesme.wapentuig.amp = 0.3;
 
 ~shesme.wapentuig.pos = 0.1;
+~shesme.wapentuig.pos = 0.3;
 ~shesme.wapentuig.pos = 0.5;
 ~shesme.wapentuig.pos = 0.9;
 
