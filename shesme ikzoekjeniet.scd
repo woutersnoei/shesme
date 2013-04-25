@@ -3,7 +3,7 @@
 
 ~shesme.ikzoekjeniet = ~shesme.ikzoekjeniet ? EM();
 
-~shesme.ikzoekjeniet.which = \snel;
+~shesme.ikzoekjeniet.which = \langzaam;
 
 ~shesme.ikzoekjeniet.loadBuffers = { |evt, action|
 	evt.buffers = ();
@@ -29,7 +29,7 @@
 */
 
 
-[ \amp, 0.1 ].pairsDo({ |key,value|
+[ \amp, 0.1, \tvar, 0 ].pairsDo({ |key,value|
 	~shesme.ikzoekjeniet[ key ] = value;
 	~shesme.ikzoekjeniet[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
@@ -38,13 +38,14 @@
 });
 
 (
-SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, gate = 1|
+SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, gate = 1|
 	var sig, verb;
 	sig = PlayBuf.ar( 8, bufnum, doneAction: 2) * 3 * amp;
 	verb = sig[[6,7]];
 	sig = sig[..5];
+	sig = PitchShift.ar( sig, 0.5, 1, 0, tvar * 0.5 );
 	sig = sig.collect({ |item|
-		RoundPan.ar( 4, item, LFDNoise3.kr(0.5) );
+		RoundPan.ar( 4, item, LFDNoise3.kr(0.2) );
 	}).sum;
 	Out.ar( 0, Env.cutoff( 0.2 ).kr(2,gate) * sig )
 }).load(s);
@@ -57,7 +58,7 @@ SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, gate = 1|
 	verb = sig[[3,4]];
 	sig = sig[..2];
 	sig = sig.collect({ |item|
-		RoundPan.ar( 4, item, LFDNoise3.kr(0.5) );
+		RoundPan.ar( 4, item, LFDNoise3.kr(0.2) );
 	}).sum;
 	Out.ar( 0, Env.cutoff( 0.2 ).kr(2,gate) * sig )
 }).load(s);
@@ -69,7 +70,9 @@ SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, gate = 1|
 	bufs = evt.which.asCollection.collect({ |wh| evt.buffers[ wh ] }).select(_.notNil);
 	bufs.do({ |buf|
 		evt.synths = evt.synths.add(
-			Synth( "shesme_ikzoekjeniet_" ++ buf.numChannels, [ \bufnum, buf, \amp, evt.amp ] )
+			Synth( "shesme_ikzoekjeniet_" ++ buf.numChannels, [ 
+				\bufnum, buf, \amp, evt.amp, \tvar, evt.tvar 
+			] )
 				.freeAction_({ |synth| evt.synths.remove( synth ); });
 		);
 	});
@@ -84,5 +87,7 @@ SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, gate = 1|
 
 /*
 ~shesme.ikzoekjeniet.start;
+~shesme.ikzoekjeniet.tvar = 1;
+
 ~shesme.ikzoekjeniet.synths;
 */
