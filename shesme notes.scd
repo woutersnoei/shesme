@@ -86,5 +86,6 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 
 /*
 ~shesme.notes.start;
+~shesme.notes.fade = 1;
 ~shesme.notes.end;
 */
