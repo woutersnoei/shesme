@@ -13,6 +13,13 @@
 ~shesme.tttt.fadeOut = 0;
 ~shesme.tttt.speed = 5;
 
+~shesme.tttt.specs = ~shesme.tttt.specs ? OEM();
+
+~shesme.tttt.specs.amp = \amp.asSpec;
+~shesme.tttt.specs.speed = [1,50,\exp,0,5].asSpec;
+~shesme.tttt.specs.transpose = [-12,12,\lin].asSpec;
+~shesme.tttt.specs.fadeOut = [0,1,\lin].asSpec;
+
 (
 SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate = 1, pan = 0|
 	var sig;

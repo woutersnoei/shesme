@@ -29,20 +29,30 @@
 ~shesme.sfr.loadBuffers;
 */
 
-[ 	\amp, 0.1, 
-	\transpose, 0, 
-	\rvar, 0, 
-	\overlap, 8, 
-	\tvar, 1.5, 
-	\speed, 10,
-	\range, [0.1,0.9]
-].pairsDo({ |key,value|
+~shesme.sfr.specs = OEM();
+
+[ 	\amp, 0.1, \amp.asSpec,
+	\transpose, 0, [-12,12,\lin].asSpec,
+	\rvar, 0, [0,12,\lin].asSpec,
+	\overlap, 8, [0.125,8,\exp,0.125,8].asSpec,
+	\tvar, 1.5, [0,2].asSpec,
+	\speed, 10, [1,100,\exp].asSpec,
+].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.sfr[ key ] = value;
 	~shesme.sfr[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
 		evt.synths.do(_.set( key, val) );
 	};
+	~shesme.sfr.specs[ key.asGetter ] = spec;
 });
+
+~shesme.sfr.range = [0.1,0.9];
+~shesme.sfr[ \range_ ] = { |evt, val|
+	evt[ \range ] = val;
+	evt.synths.do(_.set( \range, val) );
+};
 
 ~shesme.sfr.mode = \s;
 
