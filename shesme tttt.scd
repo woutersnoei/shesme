@@ -11,14 +11,15 @@
 ~shesme.tttt.amp = 0.1;
 ~shesme.tttt.transpose = 0;
 ~shesme.tttt.speed = 1;
+~shesme.tttt.fadeOut = 0;
 
 (
-SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0|
+SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate = 1, pan = 0|
 	var sig;
 	sig = PlayBuf.ar( 1, bufnum, rate, 1, 
 		(BufRateScale.kr(bufnum) / rate) * offset * SampleRate.ir, doneAction:2 
 	) * amp;
-	//sig = sig * Env([1,0],[0.1]).ar(2);
+	sig = sig * Env([1,1,0],[1-fadeOut, fadeOut] * ((BufDur.kr(bufnum) - offset)/rate), -12).ar(2);
 	sig = PanAz.ar( 4, BLowCut.ar( sig, 250, 2 ), pan );
 	OffsetOut.ar( 0, sig );
 }).store;
@@ -44,6 +45,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, offset = 0, rate = 1, pan = 0
 				\bufnum, sortedBuffers[ index ], 
 				\amp, 0.1/evt.peaks[evt.buffers.indexOf( sortedBuffers[ index ] )],
 				\pan, pan.next, //0.5.rand2,
+				\fadeOut, evt.fadeOut ? 0,
 				\offset, evt.peakTimes[evt.buffers.indexOf( sortedBuffers[ index ] )],
 				\rate, evt.transpose.midiratio * evt.freqs.mean / evt.freqs[
 					evt.buffers.indexOf( sortedBuffers[ index ] )
