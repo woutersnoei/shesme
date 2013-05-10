@@ -33,7 +33,7 @@
 SynthDef( "shesme_playnote", { |bufnum = 0, amp = 0.75, fadeIn = 0.25, gate = 1|
 	var sig;
 	sig = PlayBufAlt.ar( 1, bufnum, 1, //LFDNoise3.kr(1, 0.1).midiratio, 
-		TDuty.ar( Dwhite( 1, 4 ) )
+		TDuty.ar( Dwhite( 1, 4 ) ), lag: 0.25
 	);
 	sig = BLowCut.ar( sig, LFDNoise1.kr(0.125).exprange(20,2000), 3 );
 	sig = BHiCut.ar( sig, LFDNoise1.kr(0.125).exprange(100,20000), 3 );
