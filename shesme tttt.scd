@@ -10,8 +10,8 @@
 
 ~shesme.tttt.amp = 0.1;
 ~shesme.tttt.transpose = 0;
-~shesme.tttt.speed = 1;
 ~shesme.tttt.fadeOut = 0;
+~shesme.tttt.speed = 5;
 
 (
 SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate = 1, pan = 0|
