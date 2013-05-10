@@ -43,7 +43,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 			index = stream.next;
 			Synth.sched( 0.2, "shesme_tttt", [ 	
 				\bufnum, sortedBuffers[ index ], 
-				\amp, 0.1/evt.peaks[evt.buffers.indexOf( sortedBuffers[ index ] )],
+				\amp, (evt.amp ? 0.1)/evt.peaks[evt.buffers.indexOf( sortedBuffers[ index ] )],
 				\pan, pan.next, //0.5.rand2,
 				\fadeOut, evt.fadeOut ? 0,
 				\offset, evt.peakTimes[evt.buffers.indexOf( sortedBuffers[ index ] )],
