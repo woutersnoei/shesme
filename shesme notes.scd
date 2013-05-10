@@ -40,9 +40,12 @@
 (
 SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, gate = 1, fade = 0|
 	var sig;
+	var fadeIn, fadeOut;
+	fadeIn = Rand(0,1);
+	fadeOut = 1-fadeIn;
 	sig = PlayBuf.ar( 1, bufnum, rate, doneAction: 2 );
 	sig = sig * amp * gain;
-	sig = sig * Env([0,1,1,0], (BufDur.kr(bufnum) / rate) * [fade,2-(fade*2),fade]/2).kr;
+	sig = sig * Env([0,1,1,0], (BufDur.kr(bufnum) / rate) * [fadeIn*fade,1-fade,fadeOut*fade]).kr;
 	Out.ar( 0, RoundPan.ar( 4, sig, pan ) * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
@@ -87,5 +90,6 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 /*
 ~shesme.notes.start;
 ~shesme.notes.fade = 1;
+~shesme.notes.fade = 0;
 ~shesme.notes.end;
 */
