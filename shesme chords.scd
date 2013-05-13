@@ -74,7 +74,7 @@ SynthDef( "shesme_playnote", { |bufnum = 0, gain = 1, amp = 0.1, filter = 0, fad
 		var fade = 1;
 		inf.do({	
 			var synths, bufs, ii;
-			ii = 2.rand.postln;
+			ii = 2.rand;
 			bufs = [ evt.buffers_soft, evt.buffers ][ii].choose;
 			synths = 6.collect({|i|
 				Synth( "shesme_playnote", [ 

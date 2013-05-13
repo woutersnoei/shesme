@@ -88,7 +88,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, rvar = 0,
 
 ~shesme.sfr.start = { |evt, fade = 0.1|
 	evt.end( fade );
-	evt.synths = evt[ (evt.mode ++ "_bufs").asSymbol.postln ].collect({ |buf|
+	evt.synths = evt[ (evt.mode ++ "_bufs").asSymbol ].collect({ |buf|
 		Synth( "shesme_sfr", [ \bufnum, buf, \fadeIn, fade ] ++ 
 			evt.getPairs([ 'amp', 'transpose', 'rvar', 'overlap', 'tvar', 'speed', 'range' ])
 		);
