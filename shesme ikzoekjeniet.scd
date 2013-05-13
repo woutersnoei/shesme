@@ -33,6 +33,8 @@
 [ 
 	\amp, 0.1, \amp.asSpec, 
 	\tvar, 0, [0,1].asSpec,
+	\filter, 0, [-1,1].asSpec,
+	\hold, false, BoolSpec(false),
 	\which, \langzaam, ListSpec([ 'hoog', 'laag', 'langzaam', 'snel', 'vrolijk' ])
 ].clump(3).do({ |array|
 	var key, value, spec;
@@ -48,12 +50,24 @@
 ~shesme.ikzoekjeniet[ \which_ ] = nil;
 
 (
-SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, gate = 1|
-	var sig, verb;
-	sig = PlayBuf.ar( 8, bufnum, doneAction: 2) * 3 * amp;
-	verb = sig[[6,7]];
+SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, hold = 0, filter = 0, gate = 1|
+	var sig, hold2;
+	sig = PlayBuf.ar( 8, bufnum, rate: Slew.kr(1-hold, inf,5) > 0, doneAction: 2) * 3 * amp;
 	sig = sig[..5];
-	sig = PitchShift.ar( sig, 0.5, 1, 0, tvar * 0.5 );
+	hold = Slew.kr(hold, 5,5);
+	sig = sig.collect({ |item|
+		var inA, chainA, inB, chainB, chain;
+		inA = BLowCut.ar( WhiteNoise.ar(1), 100 );
+		inB = item;
+		chainA = FFT(LocalBuf(2048), inA);
+		chainB = FFT(LocalBuf(2048), inB);
+		chainB = PV_MagFreeze(chainB, hold );
+		chain = PV_MagMul(chainA, chainB);
+		((0.05 * IFFT(chain)) * hold) + (inB * (1-hold));
+	});
+	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(2).linexp(0,1,20,5000,\minmax), 3 );
+	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(2).linexp(-1,0,300,20000,\minmax), 3 );
+	sig = PitchShift.ar( sig * (1+(tvar > 0)).varlag(0.5), 0.5, 1, 0, tvar * 0.5 );
 	sig = sig.collect({ |item|
 		RoundPan.ar( 4, item, LFDNoise3.kr(0.2) );
 	}).sum;
@@ -62,11 +76,23 @@ SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, gate = 1|
 );
 
 (
-SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, gate = 1|
-	var sig, verb;
-	sig = PlayBuf.ar( 5, bufnum, doneAction: 2) * 3 * amp;
-	verb = sig[[3,4]];
+SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, tvar = 0, filter = 0, hold = 0, gate = 1|
+	var sig;
+	sig = PlayBuf.ar( 5, bufnum, rate: Slew.kr(1-hold, inf,5) > 0, doneAction: 2) * 3 * amp;
 	sig = sig[..2];
+	sig = sig.collect({ |item|
+		var inA, chainA, inB, chainB, chain;
+		inA = BLowCut.ar( WhiteNoise.ar(1), 100 );
+		inB = item;
+		chainA = FFT(LocalBuf(2048), inA);
+		chainB = FFT(LocalBuf(2048), inB);
+		chainB = PV_MagFreeze(chainB, hold );
+		chain = PV_MagMul(chainA, chainB);
+		((0.05 * IFFT(chain)) * hold) + (inB * (1-hold));
+	});
+	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(2).linexp(0,1,20,5000,\minmax), 3 );
+	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(2).linexp(-1,0,300,20000,\minmax), 3 );
+	sig = PitchShift.ar( sig * (1+(tvar > 0)).varlag(0.5), 0.5, 1, 0, tvar * 0.5 );
 	sig = sig.collect({ |item|
 		RoundPan.ar( 4, item, LFDNoise3.kr(0.2) );
 	}).sum;
@@ -78,10 +104,11 @@ SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, gate = 1|
 	var bufs;
 	evt.end;
 	bufs = evt.which.asCollection.collect({ |wh| evt.buffers[ wh ] }).select(_.notNil);
+	evt.hold = false;
 	bufs.do({ |buf|
 		evt.synths = evt.synths.add(
 			Synth( "shesme_ikzoekjeniet_" ++ buf.numChannels, [ 
-				\bufnum, buf, \amp, evt.amp, \tvar, evt.tvar 
+				\bufnum, buf, \amp, evt.amp, \filter, evt.filter, \tvar, evt.tvar 
 			] )
 				.freeAction_({ |synth| 
 					evt.synths.remove( synth ); 
