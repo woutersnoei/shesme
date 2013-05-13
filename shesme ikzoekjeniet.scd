@@ -28,14 +28,24 @@
 ~shesme.ikzoekjeniet.loadBuffers;
 */
 
+~shesme.ikzoekjeniet.specs = OEM();
 
-[ \amp, 0.1, \tvar, 0 ].pairsDo({ |key,value|
+[ 
+	\amp, 0.1, \amp.asSpec, 
+	\tvar, 0, [0,1].asSpec,
+	\which, \langzaam, ListSpec([ 'hoog', 'laag', 'langzaam', 'snel', 'vrolijk' ])
+].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.ikzoekjeniet[ key ] = value;
 	~shesme.ikzoekjeniet[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
 		evt.synths.do(_.set( key, val) );
 	};
+	~shesme.ikzoekjeniet.specs[ key.asGetter ] = spec;
 });
+
+~shesme.ikzoekjeniet[ \which_ ] = nil;
 
 (
 SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, gate = 1|
@@ -73,9 +83,13 @@ SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, gate = 1|
 			Synth( "shesme_ikzoekjeniet_" ++ buf.numChannels, [ 
 				\bufnum, buf, \amp, evt.amp, \tvar, evt.tvar 
 			] )
-				.freeAction_({ |synth| evt.synths.remove( synth ); });
+				.freeAction_({ |synth| 
+					evt.synths.remove( synth ); 
+					if( evt.synths.size == 0 ) { evt.active = false; }; 
+				});
 		);
 	});
+	evt.active = true;
 };
 
 

@@ -37,6 +37,8 @@
 	\overlap, 8, [0.125,8,\exp,0.125,8].asSpec,
 	\tvar, 1.5, [0,2].asSpec,
 	\speed, 10, [1,100,\exp].asSpec,
+	\range, [0.1,0.9], [0,1].asSpec.asRangeSpec,
+	\mode, \s, ListSpec([\s,\f,\r])
 ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
@@ -47,14 +49,6 @@
 	};
 	~shesme.sfr.specs[ key.asGetter ] = spec;
 });
-
-~shesme.sfr.range = [0.1,0.9];
-~shesme.sfr[ \range_ ] = { |evt, val|
-	evt[ \range ] = val;
-	evt.synths.do(_.set( \range, val) );
-};
-
-~shesme.sfr.mode = \s;
 
 ~shesme.sfr[ \mode_ ] = { |evt, newMode|
 	if( [ \f, \s, \r ].includes( newMode ) ) {
@@ -99,11 +93,13 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, rvar = 0,
 			evt.getPairs([ 'amp', 'transpose', 'rvar', 'overlap', 'tvar', 'speed', 'range' ])
 		);
 	});
+	evt.active = true;
 };
 
 ~shesme.sfr.end = { |evt, fade = 0.1|
 	evt.synths.do(_.release(fade));
 	evt.synths = nil;
+	evt.active = false;
 };
 
 )

@@ -12,12 +12,17 @@
 ~shesme.spiegel.loadBuffers;
 */
 
-[ \amp, 0.1 ].pairsDo({ |key,value|
+~shesme.spiegel.specs = OEM();
+
+[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.spiegel[ key ] = value;
 	~shesme.spiegel[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
 		evt.synths.do(_.set( key, val) );
 	};
+	~shesme.spiegel.specs[ key.asGetter ] = spec;
 });
 
 (
@@ -35,11 +40,13 @@ SynthDef( "shesme_spiegel", { |bufnum = 0, amp = 0.1, gate = 1|
 	evt.synths = evt.buffers.collect({ |buf|
 		Synth( "shesme_spiegel", [ \bufnum, buf, \amp, evt.amp ? 0.1 ] );
 	});
+	evt.active = true;
 };
 
 ~shesme.spiegel.end = { |evt|
 	evt.synths.do(_.release);
 	evt.synths = nil;
+	evt.active = false;
 };
 )
 

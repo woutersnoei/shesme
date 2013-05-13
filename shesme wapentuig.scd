@@ -12,12 +12,17 @@
 ~shesme.wapentuig.loadBuffers;
 */
 
-[ \amp, 0.1, \pos, 0 ].pairsDo({ |key,value|
+~shesme.wapentuig.specs = OEM();
+
+[ \amp, 0.1, \amp.asSpec, \pos, 0, [0,1].asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.wapentuig[ key ] = value;
 	~shesme.wapentuig[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
 		evt.synths.do(_.set( key, val) );
 	};
+	~shesme.wapentuig.specs[ key.asGetter ] = spec;
 });
 
 (
@@ -43,11 +48,13 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, gate = 1|
 			Synth( "shesme_wapentuig", [ \bufnum, buf, \amp, evt.amp ? 0.1, \pos, evt.pos ] );
 		})
 	}).flatten(1);
+	evt.active = true;
 };
 
 ~shesme.wapentuig.end = { |evt|
 	evt.synths.do(_.release);
 	evt.synths = nil;
+	evt.active = false;
 };
 )
 

@@ -12,6 +12,19 @@
 ~shesme.rrrr.loadBuffers;
 */
 
+~shesme.rrrr.specs = OEM();
+
+[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
+	~shesme.rrrr[ key ] = value;
+	~shesme.rrrr[ key.asSetter ] = { |evt, val|
+		evt[ key ] = val;
+		evt.synths.do(_.set( key, val) );
+	};
+	~shesme.rrrr.specs[ key.asGetter ] = spec;
+});
+
 (
 SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, rate = #[0.25,1.25], gate = 1|
 	var sig;
@@ -29,13 +42,15 @@ SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, rate = #[0.25,1.25], gate = 1
 ~shesme.rrrr.start = { |evt|
 	evt.end;
 	evt.synths = evt.buffers[1..].collect({ |buf|
-		Synth( "shesme_rrrr", [\bufnum, buf]);
+		Synth( "shesme_rrrr", [\bufnum, buf, \amp, evt.amp ]);
 	});
+	evt.active = true;
 };
 
 ~shesme.rrrr.end = { |evt|
 	evt.synths.do(_.release);
 	evt.synths = nil;
+	evt.active = false;
 };
 )
 

@@ -9,8 +9,9 @@
 ~shesme = ~shesme ? EM();
 ~shesme.verb = ~shesme.verb ? EM();
 
-~shesme.verb.start = { |evt| q.verb.start; };
-~shesme.verb.end = { |evt| q.verb.end; };
+~shesme.verb.start = { |evt| q.verb.start; evt.active = true; };
+~shesme.verb.end = { |evt| q.verb.end; evt.active = false; };
+~shesme.verb.active = { q.verb.active.booleanValue };
 ~shesme.verb.loadBuffers = { |evt, action| action.value; };
 
 q = q ? EM();

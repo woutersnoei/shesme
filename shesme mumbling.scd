@@ -20,12 +20,17 @@
 	}.fork
 };
 
-[ \amp, 0.1 ].pairsDo({ |key,value|
+~shesme.mumbling.specs = OEM();
+
+[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.mumbling[ key ] = value;
 	~shesme.mumbling[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
-		evt.sn.set( key, val );
+		evt.sn.set( key, val);
 	};
+	~shesme.mumbling.specs[ key.asGetter ] = spec;
 });
 		
 /*
@@ -52,11 +57,13 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], amp = 0.1, gate = 1|
 ~shesme.mumbling.start = { |evt|
 	evt.end;
 	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1 ] ); 
+	evt.active = true;
 };
 
 ~shesme.mumbling.end = { |evt|
 	evt.sn.release;
 	evt.sn = nil;
+	evt.active = false;
 };
 )
 

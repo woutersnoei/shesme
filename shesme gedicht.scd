@@ -61,6 +61,7 @@
 	if( evt.score.playState == \paused ) {
 		evt.score.resume;
 	};
+	evt.active = true;
 };
 
 ~shesme.gedicht.end = { |evt|
@@ -68,6 +69,7 @@
 		evt.score.stop;
 		evt.score.dispose;
 	};
+	evt.active = false;
 };
 
 

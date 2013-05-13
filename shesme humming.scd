@@ -8,12 +8,17 @@
 		action: action );
 };
 
-[ \amp, 0.1 ].pairsDo({ |key,value|
+~shesme.humming.specs = OEM();
+
+[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.humming[ key ] = value;
 	~shesme.humming[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
-		evt.sn.set( key, val );
+		evt.sn.set( key, val);
 	};
+	~shesme.humming.specs[ key.asGetter ] = spec;
 });
 
 (
@@ -46,11 +51,13 @@ SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], amp = 0.1, gate = 1
 		\buffers, evt.buffers[[0,2,3,4,5,6,7,8]], 
 		\amp, evt.amp ? 0.1 
 	] );
+	evt.active = true;
 };
 
 ~shesme.humming.end = { |evt|
 	evt.sn.release;
 	evt.sn = nil;
+	evt.active = false;
 };
 
 )

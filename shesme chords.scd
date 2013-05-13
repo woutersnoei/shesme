@@ -3,6 +3,24 @@
 
 ~shesme.chords = ~shesme.chords ? EM();
 
+~shesme.chords.specs = OEM();
+
+(
+[ 
+	\amp, 0.1, \amp.asSpec,
+	\filter, 0, [-1,1].asSpec,
+].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
+	~shesme.chords[ key ] = value;
+	~shesme.chords[ key.asSetter ] = { |evt, val|
+		evt[ key ] = val;
+		evt.synths.do(_.set( key, val) );
+	};
+	~shesme.chords.specs[ key.asGetter ] = spec;
+});
+);
+
 ~shesme.chords.loadBuffers = { |evt, action|
 	evt.buffers = evt.buffers ? EM();
 	evt.buffers_soft = evt.buffers_soft ? EM();
@@ -30,14 +48,19 @@
 */
  
 (
-SynthDef( "shesme_playnote", { |bufnum = 0, amp = 0.75, fadeIn = 0.25, gate = 1|
+SynthDef( "shesme_playnote", { |bufnum = 0, gain = 1, amp = 0.1, filter = 0, fadeIn = 0.25, gate = 1|
 	var sig;
 	sig = PlayBufAlt.ar( 1, bufnum, 1, //LFDNoise3.kr(1, 0.1).midiratio, 
 		TDuty.ar( Dwhite( 1, 4 ) ), lag: 0.25
 	);
-	sig = BLowCut.ar( sig, LFDNoise1.kr(0.125).exprange(20,2000), 3 );
-	sig = BHiCut.ar( sig, LFDNoise1.kr(0.125).exprange(100,20000), 3 );
-	sig = sig * LFDNoise3.kr(0.125).exprange(-13.dbamp, 0.dbamp) * amp;
+	filter = filter.lag(10);
+	sig = BLowCut.ar( sig, LFDNoise1.kr(0.125).exprange(
+		filter.linexp(0,1,20,2000,\minmax), filter.linexp(0,1,2000,20000,\minmax)
+	), 3 );
+	sig = BHiCut.ar( sig, LFDNoise1.kr(0.125).exprange(
+		filter.linexp(-1,0,20,100,\minmax), filter.linexp(-1,0,100,20000,\minmax)
+	), 3 );
+	sig = sig * 10 * LFDNoise3.kr(0.125).exprange(-13.dbamp, 0.dbamp) * gain * amp.lag(1);
 	//sig = sig + PitchShift.ar( sig * 0.25, 0.1 rrand: 0.3, 0.5, 0.01, 0.2 );
 	Out.ar( 0, RoundPan.ar( 4, sig, LFDNoise3.kr(0.125) ) * 
 		Env.asr(fadeIn,1,fadeIn).kr(2,gate) 
@@ -57,7 +80,9 @@ SynthDef( "shesme_playnote", { |bufnum = 0, amp = 0.75, fadeIn = 0.25, gate = 1|
 				Synth( "shesme_playnote", [ 
 					\bufnum, bufs[i], 
 					\fadeIn, fade, 
-					\amp, [1.5,0.75][ii] 
+					\gain, [1.5,0.75][ii],
+					\amp, evt.amp ? 0.1,
+					\filter, evt.filter ? 0
 				]).freeAction_({ |synth|
 					evt.synths.remove(synth);
 				});
@@ -68,19 +93,23 @@ SynthDef( "shesme_playnote", { |bufnum = 0, amp = 0.75, fadeIn = 0.25, gate = 1|
 			//fade.postln;
 			synths.do(_.release(fade));
 		});
-	}.fork
+	}.fork;
+	evt.active = true;
 };
 
 ~shesme.chords.end = { |evt|
 	evt.task.stop;
 	evt.task = nil;
 	evt.synths.do(_.release(1.5));
+	evt.active = false;
 };
 )
 
 /*
 ~shesme.chords.start;
 ~shesme.chords.end;
+~shesme.chords.amp = 0.1;
+~shesme.chords.filter = 0;
 */
 
 /*

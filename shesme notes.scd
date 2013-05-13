@@ -77,11 +77,13 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 			(1.0 rrand: 8.0).wait;
 		};
 	}.fork;
+	evt.active = true;
 };
 
 ~shesme.notes.end = { |evt|
 	evt.task.stop;
 	evt.synths.do(_.release);
+	evt.active = false;
 };
 
 (

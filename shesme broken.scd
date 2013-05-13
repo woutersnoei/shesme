@@ -3,12 +3,18 @@
 
 ~shesme.broken = ~shesme.broken ? EM();
 
-~shesme.broken.pbrate = [0.5, 1.6];
+~shesme.broken.specs = OEM();
 
-~shesme.broken.pbrate = { |evt, new|
-	evt[ \pbrate ] = new;
-	evt.synths.do(_.set( \pbrate, evt[ \pbrate ] ));
-};
+[ \amp, 0.1, \amp.asSpec, \pbrate, [0.5,1.6], [0.25,4,\exp].asSpec.asRangeSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
+	~shesme.broken[ key ] = value;
+	~shesme.broken[ key.asSetter ] = { |evt, val|
+		evt[ key ] = val;
+		evt.synths.do(_.set( key, val) );
+	};
+	~shesme.broken.specs[ key.asGetter ] = spec;
+});
 
 ~shesme.broken.loadBuffers = { |evt, action|
 	evt.buffers = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/broken", 
@@ -32,12 +38,14 @@ SynthDef( "shesme_broken", { |bufnum = 0, amp = 0.1, pbrate = #[0.8,1.2], gate =
 ~shesme.broken.start = { |evt|
 	evt.end;
 	evt.synths = evt.buffers.collect({ |buf|
-		Synth( "shesme_broken", [\bufnum, buf, \pbrate, evt.pbrate ? [0.8,1.2]]);
+		Synth( "shesme_broken", [\bufnum, buf, \amp, evt.amp, \pbrate, evt.pbrate ? [0.8,1.2]]);
 	});
+	evt.active = true;
 };
 
 ~shesme.broken.end = { |evt|
 	evt.synths.do(_.release(2));
 	evt.synths = nil;
+	evt.active = false;
 };
 )

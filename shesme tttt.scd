@@ -67,12 +67,14 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 			};
 		};
 	}.fork;
+	evt.active = true;
 };
 );
 
 ~shesme.tttt.end = { |evt|
 	evt.task.stop;
 	evt.task = nil;
+	evt.active = false;
 };
 
 /*

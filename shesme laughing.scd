@@ -12,17 +12,24 @@
 ~shesme.laughing.loadBuffers({"done".postln});
 */
 
-[ \pos, 0.5, \pbrate, 1, \amp, 0.1 ].pairsDo({ |key,value|
+~shesme.laughing.specs = OEM();
+
+(
+[  
+	\amp, 0.1, \amp.asSpec, 
+	\pos, 0.5, [0,1].asSpec, 
+	\pbrate, 1, [0.25,4,\exp].asSpec 
+].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.laughing[ key ] = value;
 	~shesme.laughing[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
 		evt.synths.do(_.set( key, val) );
 	};
+	~shesme.laughing.specs[ key.asGetter ] = spec;
 });
-
-~shesme.laughing.pos = 0.5;
-~shesme.laughing.pbrate = 1;
-~shesme.laughing.amp = 0.3;
+);
 
 (
 SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, amp = 0.1, gate = 1|
@@ -43,11 +50,13 @@ SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, amp = 0.1, ga
 		2.collect({ 
 			Synth( "shesme_laughing", [ \bufnum, buf ] ++ evt.getPairs([\amp, \pos, \pbrate]) );		});
 	}).flatten(1);
+	evt.active = true;
 };
 
 ~shesme.laughing.end = { |evt|
 	evt.synths.do(_.release);
 	evt.synths = nil;
+	evt.active = false;
 };
 )
 

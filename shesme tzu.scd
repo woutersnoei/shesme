@@ -3,12 +3,17 @@
 
 ~shesme.tzu = ~shesme.tzu ? EM();
 
-[ \amp, 0.1 ].pairsDo({ |key,value|
+~shesme.tzu.specs = OEM();
+
+[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
 	~shesme.tzu[ key ] = value;
 	~shesme.tzu[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
 		evt.synths.do(_.set( key, val) );
 	};
+	~shesme.tzu.specs[ key.asGetter ] = spec;
 });
 
 ~shesme.tzu.loadBuffers = { |evt, action|
@@ -62,12 +67,14 @@ SynthDef( "shesme_tzu", { |amp = 0.1, gain = 1, pan = 0, rate = 1, dur = 100, bu
 			stream.next.wait;
 		})
 	}.fork;
+	evt.active = true;
 };
 
 ~shesme.tzu.end = { |evt|
 	evt.task.stop;
 	evt.task = nil;
 	s.makeBundle(0.2, { evt.synths.do(_.release); });
+	evt.active = false;
 };
 );
 

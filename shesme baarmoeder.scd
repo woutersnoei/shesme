@@ -3,8 +3,18 @@
 
 ~shesme.baarmoeder = ~shesme.baarmoeder ? EM();
 
-~shesme.baarmoeder.amp = 0.1;
+~shesme.baarmoeder.specs = OEM();
 
+[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+	var key, value, spec;
+	#key, value, spec = array;
+	~shesme.baarmoeder[ key ] = value;
+	~shesme.baarmoeder[ key.asSetter ] = { |evt, val|
+		evt[ key ] = val;
+		evt.synths.do(_.set( key, val) );
+	};
+	~shesme.baarmoeder.specs[ key.asGetter ] = spec;
+});
 
 ~shesme.baarmoeder.path = thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/baarmoeder";
 
@@ -65,11 +75,13 @@
 				Synth( "shesme_baarmoeder_%".format(bufs.size), [ \bufs, bufs, \amp, evt.amp ])
 				.freeAction_({ |synth|
 					evt.synths.remove( synth );
+					if( evt.synths.size == 0 ) { evt.active = false; };
 				})
 			);
 			(6 rrand: 15).wait;
 		};
 	}.fork;
+	evt.active = true;
 };
 
 ~shesme.baarmoeder.end = { |evt|
