@@ -9,6 +9,7 @@
 [ 
 	\amp, 0.1, \amp.asSpec,
 	\filter, 0, [-1,1].asSpec,
+	\hold, false, BoolSpec(false)
 ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
@@ -89,6 +90,9 @@ SynthDef( "shesme_playnote", { |bufnum = 0, gain = 1, amp = 0.1, filter = 0, fad
 			});
 			evt.synths = evt.synths.addAll( synths );
 			(3 rrand: 25).wait;
+			while { evt.hold == true } {
+				(1 rrand: 2).wait;
+			};
 			fade = 0.05 rrand: 3;
 			//fade.postln;
 			synths.do(_.release(fade));
