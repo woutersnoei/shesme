@@ -5,7 +5,7 @@
 
 ~shesme.spiegel.loadBuffers = { |evt, action|
 	evt.buffers = Buffer.readDir( thisProcess.nowExecutingPath.dirname.dirname +/+ "samples/spiegel", 
-		action: action );
+		action: action, nlevels: 0 );
 };
 
 /*
@@ -30,7 +30,9 @@ SynthDef( "shesme_spiegel", { |bufnum = 0, amp = 0.1, gate = 1|
 	var sig;
 	sig = PlayBufCF.ar( 1, bufnum, 1, Dwhite(10, 30), Dwhite( 0, BufFrames.kr(bufnum) ), 1, 4 );
 	sig = sig * 4 * amp.lag(0.1);
+	sig = BLowCut.ar( sig, LFDNoise1.kr(0.1).linexp(-1,1,20,5000) );
 	sig = RoundPan.ar(4, sig, LFDNoise3.kr(0.05,2) );
+	
 	Out.ar( 0, sig * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
