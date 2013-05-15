@@ -23,7 +23,7 @@
 	\verb,
 ];
 
-~shesme.filePaths = (~shesme.names ++ [ 'gui' ]).collect({ |item|
+~shesme.filePaths = (~shesme.names ++ [ 'gui', 'dataNetwork', 'coupler' ]).collect({ |item|
 	~shesme.path +/+ "shesme" + item ++ ".scd"
 });
 
