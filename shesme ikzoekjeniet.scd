@@ -52,7 +52,7 @@
 (
 SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, hold = 0, filter = 0, gate = 1|
 	var sig, hold2;
-	sig = PlayBuf.ar( 8, bufnum, rate: Slew.kr(1-hold, inf,5) > 0, doneAction: 2) * 3 * amp;
+	sig = PlayBuf.ar( 8, bufnum, rate: Slew.kr(1-hold, inf,5) > 0, doneAction: 2) * 3;
 	sig = sig[..5];
 	hold = Slew.kr(hold, 5,5);
 	sig = sig.collect({ |item|
@@ -65,6 +65,7 @@ SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, hold = 0,
 		chain = PV_MagMul(chainA, chainB);
 		((0.05 * IFFT(chain)) * hold) + (inB * (1-hold));
 	});
+	sig = sig * amp;
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(2).linexp(0,1,20,5000,\minmax), 3 );
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(2).linexp(-1,0,300,20000,\minmax), 3 );
 	sig = PitchShift.ar( sig * (1+(tvar > 0)).varlag(0.5), 0.5, 1, 0, tvar * 0.5 );
