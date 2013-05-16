@@ -21,6 +21,11 @@
 			action: { cond.test = true; cond.signal; }
 		);
 		cond.wait;
+		cond.test = false;
+		evt.winenv = Env([0,1, 0], [0.05,0.95], [4,-4]);
+		evt.winbuf = Buffer.sendCollection(s, evt.winenv.discretize, 1, 
+			action: { cond.test = true; cond.signal; } );
+		cond.wait;
 		action.value;
 	}.fork;
 };
@@ -36,6 +41,7 @@
 	\rvar, 0, [0,12,\lin].asSpec,
 	\filter, 0, [-1,1,\lin,0,0].asSpec,
 	\convolve, 0, [0,1].asSpec,
+	\useWinbuf, false, BoolSpec(false),
 	\overlap, 8, [0.125,8,\exp,0.125,8].asSpec,
 	\tvar, 1.5, [0,2].asSpec,
 	\speed, 10, [1,100,\exp, 0, 10].asSpec,
@@ -73,7 +79,8 @@
 
 (
 SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, convolve = 0, rvar = 0, 
-	overlap = 8, tvar = 1.5, speed = 10, range = #[0.1,0.9], gate = 1, fadeIn = 0.1|
+	overlap = 8, tvar = 1.5, speed = 10, range = #[0.1,0.9], gate = 1, fadeIn = 0.1, 
+	winbuf = 0, useWinbuf = 0|
 	var sig, fft1, fft2;
 	var sig2, trigger;
 	
@@ -85,6 +92,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 		LFDNoise1.kr(0.25).range(*range),
 		4,
 		(WhiteNoise.ar * 0.05) + LFDNoise3.kr(0.125),
+		if( useWinbuf, winbuf, -1 )
 	) / (overlap.sqrt).max(1).lag(1) * amp.lag(1);
 	
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
@@ -118,8 +126,8 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 ~shesme.sfr.start = { |evt, fade = 0.1|
 	evt.end( fade );
 	evt.synths = evt[ (evt.mode ++ "_bufs").asSymbol ].collect({ |buf|
-		Synth( "shesme_sfr", [ \bufnum, buf, \fadeIn, fade ] ++ 
-			evt.getPairs([ 'amp', 'transpose', 'rvar', 'filter', 'convolve', 'overlap', 'tvar', 'speed', 'range' ])
+		Synth( "shesme_sfr", [ \bufnum, buf, \fadeIn, fade, \winbuf, evt.winbuf ] ++ 
+			evt.getPairs([ 'amp', 'transpose', 'rvar', 'filter', 'convolve', 'overlap', 'tvar', 'speed', 'range', 'useWinbuf' ])
 		);
 	});
 	evt.active = true;
