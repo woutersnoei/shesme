@@ -9,18 +9,35 @@
 
 ~shesme.coupler.performCurrent = { |evt, sensor = 'x1', val = 0|
 	evt.current[ sensor ].do({ |array|
-		var which, key, func;
-		#which, key, func = array;
-		case { func.isNil } {
-			 ~shesme[ which ].mapSet( key, val );
-		} { func.isKindOf( Spec ) } {
-			~shesme[ which ].mapSet( key, func.unmap( val ) );
-		} { func.isKindOf( Collection ) } {
-			~shesme[ which ].mapSet( key, 
-				val.linlin( func[0] ? 0, func[1] ? 1, func[2] ? 0, func[3] ? 1, \minmax ) 
-			);
+		var which, key, func, spec;
+		var action, getValue;
+		#which, key, func, spec = array;
+		
+		if( func.isKindOf( Spec ) or: { func.isKindOf( Collection ) } ) {
+			spec = func; func = nil;
+		};
+		
+		if( func.isFunction.not ) {
+			case { spec.isNil } {
+				getValue = { |val| val };
+			} { spec.isKindOf( Collection ) } {
+				getValue = { |val| 
+					val.linlin( spec[0] ? 0, spec[1] ? 1, spec[2] ? 0, spec[3] ? 1, \minmax ) 
+				};
+			} { spec.isKindOf( Spec ) } {
+				getValue = { |val| spec.unmap( val ); };
+			} { spec.isFunction } {
+				getValue = { |val| spec.value( val ); };
+			};
 		} {
 			func.value( ~shesme[ which ], key, val );
+		};
+		
+		if( func.isKindOf( ActionFunc ) ) {
+			func.action = { |val| if( val.notNil ) { ~shesme[ which ].mapSet( key, val ); } };
+			func.value( getValue.( val ) );
+		} {
+			 ~shesme[ which ].mapSet( key, getValue.( val ) );
 		};
 	});
 };
@@ -42,9 +59,9 @@
 ~shesme.coupler[ \updateFunc ] = nil;
 */
 
-~shesme.coupler.couple = { |evt, sensor = 'x1', which = 'tttt', key = 'speed', func, uncouple = true|
-	if( uncouple ) { evt.uncouple( sensor, which, key ); };
-	evt.current[ sensor ] = evt.current[ sensor ].add( [ which, key, func ] );
+~shesme.coupler.couple = { |evt, sensor = 'x1', which = 'tttt', key = 'speed', func, spec, uncouple = true|
+	if( uncouple ) { evt.uncouple( which, key, sensor ); };
+	evt.current[ sensor ] = evt.current[ sensor ].add( [ which, key, func, spec ] );
 };
 
 ~shesme.coupler.uncouple = { |evt, which, key, sensor|
