@@ -17,7 +17,9 @@
 (
 [  
 	\amp, 0.1, \amp.asSpec, 
-	\pos, 0.5, [0,1,\lin,0,0.5].asSpec, 
+	\pos, 0.5, [0,1,\lin,0,0.5].asSpec,
+	\filter, 0, [-1,1,\lin,0,0].asSpec, 
+	\verb, 0, [0,1].asSpec,
 	\pbrate, 1, [0.25,4,\exp,0,1].asSpec 
 ].clump(3).do({ |array|
 	var key, value, spec;
@@ -32,14 +34,21 @@
 );
 
 (
-SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, amp = 0.1, gate = 1|
-	var sig;
+SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, verb = 0, amp = 0.1, gate = 1,
+		filter = 0|
+	var sig, verbSig;
 	pos = pos * BufFrames.kr(bufnum);
 	sig = PlayBufCF.ar( 1, bufnum, pbrate, 
 		Dwhite(0.2,0.8), (Dwhite(-3,3) * SampleRate.ir) + pos 
 	 ) * amp * LFDNoise3.kr(0.1).exprange(0.1,1);
-	sig = RoundPan.ar( 4, sig, LFDNoise3.kr(0.5) );
-	Out.ar(0, sig * Env.cutoff.kr(2,gate) );	
+	 
+	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,10000,\minmax), 3 );
+	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,100,20000,\minmax),3 );
+	verbSig = FreeVerb.ar( sig, 1, Rand(0.9,4), 0.3 );
+	verbSig = PitchShift.ar( verbSig, 0.2, 1, 0.01, 0.2 );
+	sig = (sig * (1-verb)) + (verbSig * verb);
+	sig = RoundPan.ar( 4, sig, LFDNoise3.kr( verb.linlin(0,1,0.5,0.1) ) );
+	Out.ar(0, sig * Env.cutoff(2).kr(2,gate) );	
 }).load(s);
 );
 
@@ -48,7 +57,8 @@ SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, amp = 0.1, ga
 	evt.end;
 	evt.synths = evt.buffers.collect({ |buf|
 		2.collect({ 
-			Synth( "shesme_laughing", [ \bufnum, buf ] ++ evt.getPairs([\amp, \pos, \pbrate]) );		});
+			Synth( "shesme_laughing", [ \bufnum, buf ] ++ 
+				evt.getPairs([\amp, \pos, \pbrate, \verb, \filter]) );		});
 	}).flatten(1);
 	evt.active = true;
 };

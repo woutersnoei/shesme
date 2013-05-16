@@ -22,7 +22,7 @@
 
 ~shesme.mumbling.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec, \speed, 3, [3,200,\exp].asSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \speed, 3, [3,200,\exp].asSpec, \verb, 0, [0,1].asSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.mumbling[ key ] = value;
@@ -39,8 +39,8 @@
 */
 
 (
-SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, gate = 1|
-		var sig;
+SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, verb = 0, gate = 1|
+		var sig, verbSig;
 		/*
 		speed = (LFTri.kr(LFDNoise3.kr(0.1).exprange(0.01,0.1), -0.5 ).range(0,1) ** 3)
 			.linlin(0,1,3,200);
@@ -54,13 +54,16 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, ga
 				pan: WhiteNoise.ar 
 			);
 		}).sum;
+		verbSig = FreeVerb.ar( sig, 1, Rand(0.6,0.8), 0.5 );
+		verbSig = PitchShift.ar( verbSig, 0.1, 1, 0.01, 0.1 );
+		sig = (sig * (1-verb)) + (verbSig * verb);
 		Out.ar(0, sig * amp.lag(0.1) * Env.cutoff(2).kr(2,gate) );
 }).load(s);
 );
 
 ~shesme.mumbling.start = { |evt|
 	evt.end;
-	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \speed, evt.speed ? 3 ] ); 
+	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \speed, evt.speed ? 3, \verb, evt.verb ? 0 ] ); 
 	evt.active = true;
 };
 
