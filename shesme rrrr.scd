@@ -14,7 +14,8 @@
 
 ~shesme.rrrr.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \pbrate, [0.25,1.25], [0.125,8,\exp].asSpec.asRangeSpec ]
+	.clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.rrrr[ key ] = value;
@@ -26,9 +27,9 @@
 });
 
 (
-SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, rate = #[0.25,1.25], gate = 1|
+SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, pbrate = #[0.25,1.25], gate = 1|
 	var sig;
-	sig = PlayBufCF.ar( 1, bufnum, Dwhite(0, 1, inf).linexp(0,1,*rate) * Drand([-1,1], inf), 
+	sig = PlayBufCF.ar( 1, bufnum, Dwhite(0, 1, inf).linexp(0,1,*pbrate) * Drand([-1,1], inf), 
 		Dwhite(1, 4, inf), Dwhite(0, BufFrames.kr(bufnum)), 1, 1 ) * 4;
 	sig = sig ring1: SinOsc.ar( LFDNoise3.kr(0.1).exprange(200,800), 0, 0.33 );
 	sig = BLowCut.ar( sig, LFDNoise3.kr(0.1).exprange( 20, 10000 ), 4 );
@@ -42,7 +43,7 @@ SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, rate = #[0.25,1.25], gate = 1
 ~shesme.rrrr.start = { |evt|
 	evt.end;
 	evt.synths = evt.buffers[1..].collect({ |buf|
-		Synth( "shesme_rrrr", [\bufnum, buf, \amp, evt.amp ]);
+		Synth( "shesme_rrrr", [\bufnum, buf, \amp, evt.amp, \pbrate, evt.pbrate ]);
 	});
 	evt.active = true;
 };
