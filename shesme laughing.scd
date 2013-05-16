@@ -17,8 +17,8 @@
 (
 [  
 	\amp, 0.1, \amp.asSpec, 
-	\pos, 0.5, [0,1].asSpec, 
-	\pbrate, 1, [0.25,4,\exp].asSpec 
+	\pos, 0.5, [0,1,\lin,0,0.5].asSpec, 
+	\pbrate, 1, [0.25,4,\exp,0,1].asSpec 
 ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;

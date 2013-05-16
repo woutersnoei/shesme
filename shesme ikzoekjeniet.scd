@@ -33,7 +33,7 @@
 [ 
 	\amp, 0.1, \amp.asSpec, 
 	\tvar, 0, [0,1].asSpec,
-	\filter, 0, [-1,1].asSpec,
+	\filter, 0, [-1,1, \lin,0,0].asSpec,
 	\hold, false, BoolSpec(false),
 	\which, \langzaam, ListSpec([ 'hoog', 'laag', 'langzaam', 'snel', 'vrolijk' ])
 ].clump(3).do({ |array|

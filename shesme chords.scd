@@ -8,7 +8,7 @@
 (
 [ 
 	\amp, 0.1, \amp.asSpec,
-	\filter, 0, [-1,1].asSpec,
+	\filter, 0, [-1,1,\lin,0,0].asSpec,
 	\hold, false, BoolSpec(false)
 ].clump(3).do({ |array|
 	var key, value, spec;

@@ -32,11 +32,11 @@
 ~shesme.sfr.specs = OEM();
 
 [ 	\amp, 0.1, \amp.asSpec,
-	\transpose, 0, [-12,12,\lin].asSpec,
+	\transpose, 0, [-24,24,\lin,0,0].asSpec,
 	\rvar, 0, [0,12,\lin].asSpec,
 	\overlap, 8, [0.125,8,\exp,0.125,8].asSpec,
 	\tvar, 1.5, [0,2].asSpec,
-	\speed, 10, [1,100,\exp].asSpec,
+	\speed, 10, [1,100,\exp, 0, 10].asSpec,
 	\range, [0.1,0.9], [0,1].asSpec.asRangeSpec,
 	\mode, \s, ListSpec([\s,\f,\r])
 ].clump(3).do({ |array|
