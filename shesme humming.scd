@@ -10,7 +10,7 @@
 
 ~shesme.humming.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \ring, 0, [0,1].asSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.humming[ key ] = value;
@@ -22,17 +22,25 @@
 });
 
 (
-SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], amp = 0.1, gate = 1|
+SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1, gate = 1|
 	var levels, sig;
 	levels = buffers.collect({ LFDNoise3.kr(0.06).exprange(-60.dbamp,1); });
 	levels = levels / levels.sum;
+	ring = ring.varlag(2);
 	sig = buffers.collect({ |buf, i|
-			var sig, verb;
+			var sig, verb, basefr;
 			var pos, rate = 1;
 			sig = PlayBufCF.ar( 1, buf, rate, 
 				Dwhite(3,8), Dwhite(0, BufFrames.kr(buf)),
 				lag: 2 
 			 ) * 8 * levels[i];
+			/*
+			basefr = LFDNoise3.kr(0.1).exprange(100,2000);
+			sig = (sig * (1-ring) ) + 
+				(sig * SinOsc.ar( basefr * LFDNoise3.kr(0.1.dup(2)).exprange(0.9,1/0.9)
+				).mean * ring );
+			*/
+			sig = FreqShift.ar( sig, LFDNoise3.kr(0.1, ring).range(-300,300) );
 			sig = BLowCut.ar( sig, LFDNoise3.kr( 0.1 ).exprange(20, 6000 ), 3 );
 			RoundPan.ar( 4, sig, LFDNoise3.kr(0.05) );
 	}).sum;
@@ -49,7 +57,8 @@ SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], amp = 0.1, gate = 1
 	evt.end;
 	evt.sn = Synth( "shesme_humming", [ 
 		\buffers, evt.buffers[[0,2,3,4,5,6,7,8]], 
-		\amp, evt.amp ? 0.1 
+		\amp, evt.amp ? 0.1,
+		\ring, evt.ring ? 0
 	] );
 	evt.active = true;
 };
