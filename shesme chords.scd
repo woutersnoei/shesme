@@ -89,7 +89,7 @@ SynthDef( "shesme_playnote", { |bufnum = 0, gain = 1, amp = 0.1, filter = 0, fad
 				});
 			});
 			evt.synths = evt.synths.addAll( synths );
-			(3 rrand: 25).wait;
+			(6 rrand: 25).wait;
 			while { evt.hold == true } {
 				(1 rrand: 2).wait;
 			};
