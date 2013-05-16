@@ -34,6 +34,8 @@
 [ 	\amp, 0.1, \amp.asSpec,
 	\transpose, 0, [-24,24,\lin,0,0].asSpec,
 	\rvar, 0, [0,12,\lin].asSpec,
+	\filter, 0, [-1,1,\lin,0,0].asSpec,
+	\convolve, 0, [0,1].asSpec,
 	\overlap, 8, [0.125,8,\exp,0.125,8].asSpec,
 	\tvar, 1.5, [0,2].asSpec,
 	\speed, 10, [1,100,\exp, 0, 10].asSpec,
@@ -70,9 +72,11 @@
 */
 
 (
-SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, rvar = 0, 
+SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, convolve = 0, rvar = 0, 
 	overlap = 8, tvar = 1.5, speed = 10, range = #[0.1,0.9], gate = 1, fadeIn = 0.1|
-	var sig;
+	var sig, fft1, fft2;
+	var sig2, trigger;
+	
 	sig = GrainBuf.ar( 4, 
 		TDuty.ar( 1/speed * (1 + Dwhite( tvar.neg/2, tvar/2, inf ) ) ),
 		overlap/speed,
@@ -82,6 +86,31 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, rvar = 0,
 		4,
 		(WhiteNoise.ar * 0.05) + LFDNoise3.kr(0.125),
 	) / (overlap.sqrt).max(1).lag(1) * amp.lag(1);
+	
+	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
+	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,300,20000,\minmax),3 );
+	
+	trigger = ToggleFF.kr( TDuty.kr(10,30) );
+	trigger = [ trigger, 1-trigger ];
+	
+	sig2 = trigger.collect({ |tr|
+		Siren.ar( 
+			SortedRand.kr(tr, 4, 48, 100, 0.5 ).round(1).midicps + LFDNoise1.kr(0.2).range(-10,10), 
+			sharpness: LFDNoise3.kr(0.1.dup(4)).range(1,10) 
+		).mean * (Slew.kr( tr, 1/5, 1/5 ) * 0.5pi).sin
+	}).sum;
+	
+	fft2 = FFT( LocalBuf(1024).clear, sig2 );
+	
+	sig2 = sig.collect({ |sig|
+		var fft; 
+		fft = FFT( LocalBuf(1024).clear, sig );
+		fft = PV_MagMul( fft, fft2 );
+		IFFT( fft ) * 0.2;
+	});
+	
+	sig = (DelayN.ar( sig, ((1024 * 0.75) + 128)/44100, ((1024 * 0.75) + 128)/44100) * (1-convolve)) + (sig2 * convolve);
+	
 	Out.ar( 0, sig * Env.asr( fadeIn, 1, fadeIn ).kr(2,gate) );
 }).load(s);
 );
@@ -90,7 +119,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, rvar = 0,
 	evt.end( fade );
 	evt.synths = evt[ (evt.mode ++ "_bufs").asSymbol ].collect({ |buf|
 		Synth( "shesme_sfr", [ \bufnum, buf, \fadeIn, fade ] ++ 
-			evt.getPairs([ 'amp', 'transpose', 'rvar', 'overlap', 'tvar', 'speed', 'range' ])
+			evt.getPairs([ 'amp', 'transpose', 'rvar', 'filter', 'convolve', 'overlap', 'tvar', 'speed', 'range' ])
 		);
 	});
 	evt.active = true;
