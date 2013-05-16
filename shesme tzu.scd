@@ -42,7 +42,7 @@ SynthDef( "shesme_tzu", { |amp = 0.1, gain = 1, pan = 0, rate = 1, dur = 100, bu
 		var stream, index = 0, hist = [];
 		
 		stream = (
-			Pstutter( Pwhite(2,5, inf), Pwhite(0.0,1.0).linexp(0,1,0.1,5) ) 
+			Pstutter( Pwhite(2,5, inf), Pwhite(0.0,1.0).linexp(0,1,0.1,8) ) 
 			* Pwhite(0.95,1.05, inf)
 		).asStream;
 		
