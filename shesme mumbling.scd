@@ -22,7 +22,7 @@
 
 ~shesme.mumbling.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \speed, 3, [3,200,\exp].asSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.mumbling[ key ] = value;
@@ -39,10 +39,14 @@
 */
 
 (
-SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], amp = 0.1, gate = 1|
-		var sig, speed;
+SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, gate = 1|
+		var sig;
+		/*
 		speed = (LFTri.kr(LFDNoise3.kr(0.1).exprange(0.01,0.1), -0.5 ).range(0,1) ** 3)
 			.linlin(0,1,3,200);
+		*/
+		speed = speed.varlag(5);
+			
 		sig = buffers.collect({ |buf|
 			GrainBuf.ar(4, Dust.ar( speed ), 0.2, buf, 
 				WhiteNoise.ar.exprange(0.95,1/0.95) * speed.linlin(5,100,-2,3).midiratio, 
@@ -56,7 +60,7 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], amp = 0.1, gate = 1|
 
 ~shesme.mumbling.start = { |evt|
 	evt.end;
-	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1 ] ); 
+	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \speed, evt.speed ? 3 ] ); 
 	evt.active = true;
 };
 
