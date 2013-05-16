@@ -44,7 +44,7 @@ SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1
 			sig = BLowCut.ar( sig, LFDNoise3.kr( 0.1 ).exprange(20, 6000 ), 3 );
 			RoundPan.ar( 4, sig, LFDNoise3.kr(0.05) );
 	}).sum;
-	Out.ar( 0, sig * amp.lag(0.1) * Env.cutoff.kr(2,gate) );
+	Out.ar( 0, sig * amp.lag(0.1) * Env.cutoff(2).kr(2,gate) );
 
 }).load(s);
 );
