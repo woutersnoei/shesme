@@ -73,7 +73,7 @@ SynthDef( "shesme_tzu", { |amp = 0.1, gain = 1, pan = 0, rate = 1, dur = 100, bu
 ~shesme.tzu.end = { |evt|
 	evt.task.stop;
 	evt.task = nil;
-	s.makeBundle(0.2, { evt.synths.do(_.release); });
+	//s.makeBundle(0.2, { evt.synths.do(_.release); });
 	evt.active = false;
 };
 );

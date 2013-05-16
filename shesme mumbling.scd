@@ -50,7 +50,7 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], amp = 0.1, gate = 1|
 				pan: WhiteNoise.ar 
 			);
 		}).sum;
-		Out.ar(0, sig * amp.lag(0.1) * Env.cutoff.kr(2,gate) );
+		Out.ar(0, sig * amp.lag(0.1) * Env.cutoff(2).kr(2,gate) );
 }).load(s);
 );
 

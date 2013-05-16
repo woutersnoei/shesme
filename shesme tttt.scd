@@ -17,7 +17,7 @@
 
 ~shesme.tttt.specs.amp = \amp.asSpec;
 ~shesme.tttt.specs.speed = [1,50,\exp,0,5].asSpec;
-~shesme.tttt.specs.transpose = [-12,12,\lin].asSpec;
+~shesme.tttt.specs.transpose = [-12,12,\lin,0,0].asSpec;
 ~shesme.tttt.specs.fadeOut = [0,1,\lin].asSpec;
 
 (

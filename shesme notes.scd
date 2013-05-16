@@ -82,7 +82,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 
 ~shesme.notes.end = { |evt|
 	evt.task.stop;
-	evt.synths.do(_.release);
+	//evt.synths.do(_.release);
 	evt.active = false;
 };
 
