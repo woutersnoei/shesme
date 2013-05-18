@@ -25,7 +25,7 @@
 SynthDef( "shesme_tzu", { |amp = 0.1, gain = 1, pan = 0, rate = 1, dur = 100, bufnum = 0, gate = 1|
 	var sig;
 	sig = PlayBuf.ar( 1, bufnum, rate, doneAction: 2 ) * Env([1,1,0],[dur,0.1]).kr(2);
-	sig = RoundPan.ar(4, sig * amp.lag(0.1) * gain, pan);
+	sig = RoundPan.ar(6, sig * amp.lag(0.1) * gain, pan);
 	OffsetOut.ar( 0, sig * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
@@ -58,7 +58,7 @@ SynthDef( "shesme_tzu", { |amp = 0.1, gain = 1, pan = 0, rate = 1, dur = 100, bu
 					
 					\amp, (evt.amp ? 0.1),
 					\gain, 1 / (evt.rms[ index ] / evt.rms.mean), 
-					\pan, -0.25 rrand: 0.25,
+					\pan, -1.0 rrand: 1.0,
 					// \dur, 1,
 					\rate, ((evt.freqs[ index ].cpsmidi.round + 1.rand2).midicps ) /
 						evt.freqs[ index ]

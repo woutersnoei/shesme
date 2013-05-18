@@ -70,7 +70,7 @@ SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, hold = 0,
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(2).linexp(-1,0,300,20000,\minmax), 3 );
 	sig = PitchShift.ar( sig * (1+(tvar > 0)).varlag(0.5), 0.5, 1, 0, tvar * 0.5 );
 	sig = sig.collect({ |item|
-		RoundPan.ar( 4, item, LFDNoise3.kr(0.2) );
+		RoundPan.ar( 6, item, LFDNoise3.kr(0.1) * 2 );
 	}).sum;
 	Out.ar( 0, Env.cutoff( 0.2 ).kr(2,gate) * sig )
 }).load(s);
@@ -95,7 +95,7 @@ SynthDef( "shesme_ikzoekjeniet_5", { |bufnum = 0, amp = 0.1, tvar = 0, filter = 
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(2).linexp(-1,0,300,20000,\minmax), 3 );
 	sig = PitchShift.ar( sig * (1+(tvar > 0)).varlag(0.5), 0.5, 1, 0, tvar * 0.5 );
 	sig = sig.collect({ |item|
-		RoundPan.ar( 4, item, LFDNoise3.kr(0.2) );
+		RoundPan.ar( 6, item, LFDNoise3.kr(0.1) * 2 );
 	}).sum;
 	Out.ar( 0, Env.cutoff( 0.2 ).kr(2,gate) * sig )
 }).load(s);

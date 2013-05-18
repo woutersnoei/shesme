@@ -27,7 +27,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 		(BufRateScale.kr(bufnum) / rate) * offset * SampleRate.ir, doneAction:2 
 	) * amp;
 	sig = sig * Env([1,1,0],[1-fadeOut, fadeOut] * ((BufDur.kr(bufnum) - offset)/rate), -12).ar(2);
-	sig = PanAz.ar( 4, BLowCut.ar( sig, 250, 2 ), pan );
+	sig = PanAz.ar( 6, BLowCut.ar( sig, 250, 2 ), pan );
 	OffsetOut.ar( 0, sig );
 }).store;
 );
@@ -42,7 +42,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 		stream = Pbrown( 0, (evt.buffers.size-1).asInt, 10, inf ).asStream;
 		sortedBuffers = [ evt.freqs, evt.buffers ].flop.sort({ |a,b| a[0] <= b[0] }).flop[1];
 		times = (Pbrown(0.0,1.0,0.1,inf).linlin(0,1,1/3,3) * Pwhite(0.9,1.1,inf)).asStream;
-		pan = Pwhite(-0.25,0.25,inf).asStream;
+		pan = Pwhite(-1.0,1.0,inf).asStream;
 		//stream = Pseq( [ Pseries(0, 1, evt.buffers.size ) ], inf ).asStream;
 		//times = Pwrand( [ Pseq([0.05,0.05,0.05,0.05],1), 0.1 ], [0.1, 0.9 ], inf ).asStream;
 		// stream = PintL( Pwhite(0, evt.buffers.size.asInt, inf ), 0.05 ).round(1).asStream;

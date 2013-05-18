@@ -63,7 +63,7 @@ SynthDef( "shesme_playnote", { |bufnum = 0, gain = 1, amp = 0.1, filter = 0, fad
 	), 3 );
 	sig = sig * 10 * LFDNoise3.kr(0.125).exprange(-13.dbamp, 0.dbamp) * gain * amp.lag(1);
 	//sig = sig + PitchShift.ar( sig * 0.25, 0.1 rrand: 0.3, 0.5, 0.01, 0.2 );
-	Out.ar( 0, RoundPan.ar( 4, sig, LFDNoise3.kr(0.125) ) * 
+	Out.ar( 0, RoundPan.ar( 6, sig, LFDNoise3.kr(0.125/2) * 2 ) * 
 		Env.asr(fadeIn,1,fadeIn).kr(2,gate) 
 	);
 }).load(s);

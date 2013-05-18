@@ -47,7 +47,7 @@ SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, verb = 0, amp
 	verbSig = FreeVerb.ar( sig, 1, Rand(0.9,4), 0.3 );
 	verbSig = PitchShift.ar( verbSig, 0.2, 1, 0.01, 0.2 );
 	sig = (sig * (1-verb)) + (verbSig * verb);
-	sig = RoundPan.ar( 4, sig, LFDNoise3.kr( verb.linlin(0,1,0.5,0.1) ) );
+	sig = RoundPan.ar( 6, sig, LFDNoise3.kr( verb.linlin(0,1,0.25,0.05) ) * 2);
 	Out.ar(0, sig * Env.cutoff(2).kr(2,gate) );	
 }).load(s);
 );

@@ -45,7 +45,7 @@ SynthDef( "shesme_opnieuw", { |amp = 0.1, gate = 1|
 		PlayBuf.ar( 1, bufnum, doneAction: 2) * 3 * amp;
 	});
 	sig = sig.collect({ |item|
-		RoundPan.ar( 4, item, LFDNoise3.kr(0.125) );
+		RoundPan.ar( 6, item, LFDNoise3.kr(0.125/2) * 2 );
 	}).sum;
 	Out.ar( 0, Env.cutoff( 0.2 ).kr(2,gate) * sig )
 }).load(s);

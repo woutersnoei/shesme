@@ -35,7 +35,7 @@ SynthDef( "shesme_rrrr", { |bufnum = 0, amp = 0.1, pbrate = #[0.25,1.25], gate =
 	sig = BLowCut.ar( sig, LFDNoise3.kr(0.1).exprange( 20, 10000 ), 4 );
 	sig = BHiCut.ar( sig, LFDNoise3.kr(0.1).exprange( 200, 20000 ), 4 );
 	//sig = PitchShift.ar(sig, 0.2, 1, 0.01, 0.2);
-	sig = RoundPan.ar( 4, sig * amp, LFDNoise3.kr(0.1) * 2 );
+	sig = RoundPan.ar( 6, sig * amp, LFDNoise3.kr(0.1) * 2 );
 	Out.ar( 0, sig * Env.cutoff.kr(2,gate) );
 }).load(s);
 );

@@ -53,7 +53,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 	sig = PlayBuf.ar( 1, bufnum, rate, doneAction: 2 );
 	sig = sig * amp * gain;
 	sig = sig * Env([0,1,1,0], (BufDur.kr(bufnum) / rate) * [fadeIn*fade,1-fade,fadeOut*fade]).kr;
-	Out.ar( 0, RoundPan.ar( 4, sig, pan ) * Env.cutoff.kr(2,gate) );
+	Out.ar( 0, RoundPan.ar( 6, sig, pan ) * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
 
@@ -78,7 +78,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 					\bufnum, evt.buffers[index], 
 					\rate, (evt.freqs[ index ].cpsmidi.round(1).midicps * (1.rand2.midiratio) ) 
 						/ evt.freqs[ index ],
-					\pan, (-0.25 rrand: 0.25),
+					\pan, (-1.0 rrand: 1.0),
 					\fade, evt.fade ? 0,
 					\gain,  1 / (evt.peaks[ index ] / evt.peaks.mean),
 					\amp, evt.amp

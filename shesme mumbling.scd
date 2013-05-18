@@ -48,7 +48,7 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, ve
 		speed = speed.varlag(5);
 			
 		sig = buffers.collect({ |buf|
-			GrainBuf.ar(4, Dust.ar( speed ), 0.2, buf, 
+			GrainBuf.ar(6, Dust.ar( speed ), 0.2, buf, 
 				WhiteNoise.ar.exprange(0.95,1/0.95) * speed.linlin(5,100,-2,3).midiratio, 
 				WhiteNoise.ar.range(0,1), 
 				pan: WhiteNoise.ar 

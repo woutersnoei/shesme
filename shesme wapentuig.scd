@@ -35,7 +35,7 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, gate = 1|
 	verb = sig[[6,7]];
 	sig = sig[..5];
 	sig = sig.collect({ |item|
-		RoundPan.ar( 4, item, LFDNoise3.kr(0.5) );
+		RoundPan.ar( 6, item, LFDNoise3.kr(0.25,2) );
 	}).sum;
 	Out.ar( 0, sig * amp.lag(0.1) * Env.cutoff.kr(2,gate) );
 }).load(s);

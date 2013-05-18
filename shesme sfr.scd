@@ -84,7 +84,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 	var sig, fft1, fft2;
 	var sig2, trigger;
 	
-	sig = GrainBuf.ar( 4, 
+	sig = GrainBuf.ar( 6, 
 		TDuty.ar( 1/speed * (1 + Dwhite( tvar.neg/2, tvar/2, inf ) ) ),
 		overlap/speed,
 		bufnum,
