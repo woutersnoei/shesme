@@ -21,6 +21,7 @@
 	\tzu,
 	\wapentuig,
 	\verb,
+	\speakerCorrect,
 ];
 
 ~shesme.filePaths = (~shesme.names ++ [ 'gui', 'dataNetwork', 'coupler' ]).collect({ |item|
@@ -34,10 +35,12 @@
 		var cond;
 		cond = Condition( false );
 		evt.names.do({ |name|
-			"loading buffers for ~shesme.%\n".postf( name );
-			evt[ name ].loadBuffers( { cond.test = true; cond.signal } );
-			cond.wait;
-			cond.test = false;
+			if( evt[ name ][ \loadBuffers ].notNil ) {
+				"loading buffers for ~shesme.%\n".postf( name );
+				evt[ name ].loadBuffers( { cond.test = true; cond.signal } );
+				cond.wait;
+				cond.test = false;
+			};
 		});
 		action.value;
 	}.fork;
