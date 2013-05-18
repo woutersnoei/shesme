@@ -35,7 +35,7 @@
 	\tvar, 0, [0,1].asSpec,
 	\filter, 0, [-1,1, \lin,0,0].asSpec,
 	\hold, false, BoolSpec(false),
-	\which, \langzaam, ListSpec([ 'hoog', 'laag', 'langzaam', 'snel', 'vrolijk' ])
+	\which, \langzaam, ListSpec([ 'hoog', 'laag', 'langzaam', 'snel', 'vrolijk', 'footsteps' ])
 ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
