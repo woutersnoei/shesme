@@ -97,7 +97,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 	
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,300,20000,\minmax),3 );
-	
+	/*
 	trigger = ToggleFF.kr( TDuty.kr(10,30) );
 	trigger = [ trigger, 1-trigger ];
 	
@@ -118,7 +118,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 	});
 	
 	sig = (DelayN.ar( sig, ((1024 * 0.75) + 128)/44100, ((1024 * 0.75) + 128)/44100) * (1-convolve)) + (sig2 * convolve);
-	
+	*/
 	Out.ar( 0, sig * Env.asr( fadeIn, 1, fadeIn ).kr(2,gate) );
 }).load(s);
 );
@@ -133,7 +133,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 	evt.active = true;
 };
 
-~shesme.sfr.end = { |evt, fade = 0.1|
+~shesme.sfr.end = { |evt, fade = 2|
 	evt.synths.do(_.release(fade));
 	evt.synths = nil;
 	evt.active = false;
