@@ -4,17 +4,6 @@
 
 ~shesme.speakerCorrect.specs = OEM();
 
-[ \toMain, 0, \amp.asSpec ].clump(3).do({ |array|
-	var key, value, spec;
-	#key, value, spec = array;
-	~shesme.speakerCorrect[ key ] = value;
-	~shesme.speakerCorrect[ key.asSetter ] = { |evt, val|
-		evt[ key ] = val;
-		evt.sn.set( key, val);
-	};
-	~shesme.speakerCorrect.specs[ key.asGetter ] = spec;
-});
-
 SynthDef( "shesme_speakerCorrect", {
 	var in;
 	in = In.ar(0,10);
