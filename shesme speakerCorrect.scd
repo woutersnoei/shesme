@@ -10,7 +10,7 @@
 	~shesme.speakerCorrect[ key ] = value;
 	~shesme.speakerCorrect[ key.asSetter ] = { |evt, val|
 		evt[ key ] = val;
-		evt.sn.set( key, val) );
+		evt.sn.set( key, val);
 	};
 	~shesme.speakerCorrect.specs[ key.asGetter ] = spec;
 });
