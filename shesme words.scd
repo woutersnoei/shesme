@@ -54,6 +54,7 @@
 			};
 		});
 	});
+	evt.specs.index = ListSpec( (..15), 0, ~shesme.words.texts );
 	"loaded paths for ~shesme.words".postln;
 	action.value;
 };
