@@ -5,7 +5,7 @@
 
 ~shesme.notes.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec, \fade, 0, [0,1].asSpec, \selection, [0,1], [0,1].asSpec.asRangeSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \filter, 0, [-1,1,\lin,0,0].asSpec, \fade, 0, [0,1].asSpec, \selection, [0,1], [0,1].asSpec.asRangeSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.notes[ key ] = value;
@@ -45,12 +45,14 @@
 */
 
 (
-SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, gate = 1, fade = 0|
+SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.1, pan = 0, gate = 1, fade = 0|
 	var sig;
 	var fadeIn, fadeOut;
 	fadeIn = Rand(0,1);
 	fadeOut = 1-fadeIn;
 	sig = PlayBuf.ar( 1, bufnum, rate, doneAction: 2 );
+	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
+	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,300,20000,\minmax),3 );
 	sig = sig * amp * gain;
 	sig = sig * Env([0,1,1,0], (BufDur.kr(bufnum) / rate) * [fadeIn*fade,1-fade,fadeOut*fade]).kr;
 	Out.ar( 0, RoundPan.ar( 6, sig, pan ) * Env.cutoff.kr(2,gate) );
@@ -81,7 +83,8 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, gain = 1, amp = 0.1, pan = 0, 
 					\pan, (-1.0 rrand: 1.0),
 					\fade, evt.fade ? 0,
 					\gain,  1 / (evt.peaks[ index ] / evt.peaks.mean),
-					\amp, evt.amp
+					\amp, evt.amp,
+					\filter, evt.filter ? 0,
 				] ).freeAction_({ |synth|
 					 evt.synths.remove( synth );
 				});
