@@ -20,6 +20,7 @@
 	\tttt,
 	\tzu,
 	\wapentuig,
+	\words,
 	\verb,
 	\speakerCorrect,
 ];
