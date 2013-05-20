@@ -86,7 +86,7 @@
 	which = which ? evt.which;
 	if( index < 16 ) {
 		chain = evt[ which ][index].choose.deepCopy;
-		chain.set( \bus, [0,5].choose );
+		chain.set( \bus, 6.rand );
 		chain.gain = evt.amp.ampdb;
 		chain.prepareAndStart;
 	};
