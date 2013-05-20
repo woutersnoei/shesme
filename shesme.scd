@@ -25,7 +25,7 @@
 	\speakerCorrect,
 ];
 
-~shesme.filePaths = (~shesme.names ++ [ 'speakerTest', 'gui', 'dataNetwork', 'coupler' ]).collect({ |item|
+~shesme.filePaths = (~shesme.names ++ [ 'speakerTest', 'gui', 'dataNetwork', 'coupler', 'presetSystem' ]).collect({ |item|
 	~shesme.path +/+ "shesme" + item ++ ".scd"
 });
 

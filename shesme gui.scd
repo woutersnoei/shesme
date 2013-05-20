@@ -34,9 +34,46 @@
 				);
 			})
 			.resize_(2);
-	evt.views[ \label ] = StaticText( evt.composite, width - 30 @ 15 )
+	evt.views[ \label ] = StaticText( evt.composite, (width - 150) @ 15 )
 		.string_( which.asString )
 		.font_( Font( "Helvetica-Bold", 10 ) );
+	if( evt.keys.asArray.includes( \getPreset ) ) {
+		evt.views[ \fillPresets ] = {
+			evt.views[ \presets ].items = [ "presets", "" ] ++ evt.presetNames ++ 
+				[ "", "save", "revert", "add..", "remove.." ];
+		};
+		evt.views[ \presets ] = PopUpMenu( evt.composite, 116 @ 15 )
+			.action_({ |pu|
+				case { pu.item.isKindOf( Symbol ) } {
+					evt.applyPreset( pu.item );
+				} { pu.item == "save" } {
+					~shesme.presetSystem.save;
+				} { pu.item == "revert" } {
+					~shesme.presetSystem.read;
+					~shesme.names.do({ |key|
+						key = ~shesme[ key ];
+						if( key.views !? { |x| x.keys.includes( \fillPresets ) } ? false) {
+							key.views.fillPresets;
+						};
+					});
+				} { pu.item == "add.." } {
+					SCRequestString( "default", "Please enter preset name:", { |string|
+						evt.getPreset( string.asSymbol );
+						evt.views.fillPresets;	
+					});
+				} { pu.item == "remove.." } {
+					SCRequestString( evt.presetNames.cs, "Please edit preset names:", { 
+						|string|
+						evt.presetNames_( string.interpret );
+						evt.views.fillPresets;
+					});
+				};
+				pu.value = 0;
+			}).font_( Font( "Helvetica", 10 ) );
+		evt.views.fillPresets;
+	} {
+		evt.composite.decorator.shift(120,0);
+	};
 	evt.views[ \file ] = SmoothButton( evt.composite, 15 @ 15 )
 		.border_(1)
 		.background_( Gradient( Color.gray(1), Color.gray(0.8), \v ) )
