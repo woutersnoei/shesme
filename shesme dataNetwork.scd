@@ -20,9 +20,9 @@
 	evt.n.makeGui;
 };
 
-~shesme.dataNetwork.bend1range = [0.45,0.58];
+~shesme.dataNetwork.bend1range = [0.5,0.7];
 ~shesme.dataNetwork.bend2range = [0.45,0.63];
-~shesme.dataNetwork.press1range = [0,0.5];
+~shesme.dataNetwork.press1range = [0.3,0.9];
 ~shesme.dataNetwork.press2range = [0,0.5];
 
 ~shesme.dataNetwork.startRegistering = { |evt|
@@ -45,19 +45,19 @@
 			};
 		});
 		evt.n.addHook( 2, {
-			evt.n.nodes[1].slots[0].action = { |data|
+			evt.n.nodes[2].slots[0].action = { |data|
 				evt.vals[ \bend2 ] = data.linlin(evt.bend2range[0], evt.bend2range[1], 0,1);
 			};
-			evt.n.nodes[1].slots[1].action = { |data|
+			evt.n.nodes[2].slots[1].action = { |data|
 				evt.vals[ \press2 ] = (1-data).linlin(evt.press2range[0], evt.press2range[1], 0,1);
 			};
-			evt.n.nodes[1].slots[4].action = { |data|
+			evt.n.nodes[2].slots[4].action = { |data|
 				evt.vals[ \x2 ]  = data.linlin(0.46,0.54,0,1);
 			};
-			evt.n.nodes[1].slots[5].action = { |data|
+			evt.n.nodes[2].slots[5].action = { |data|
 				evt.vals[ \y2 ] = data.linlin(0.46,0.54,0,1);
 			};
-			evt.n.nodes[1].slots[6].action = { |data|
+			evt.n.nodes[2].slots[6].action = { |data|
 				evt.vals[ \z2 ]  = data.linlin(0.46,0.54,0,1);
 			};
 		});
