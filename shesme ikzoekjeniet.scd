@@ -71,7 +71,7 @@ SynthDef( "shesme_ikzoekjeniet_8", { |bufnum = 0, amp = 0.1, tvar = 0, hold = 0,
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(2).linexp(0,1,20,5000,\minmax), 3 );
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(2).linexp(-1,0,300,20000,\minmax), 3 );
 	sig = PitchShift.ar( sig * (1+(tvar > 0)).varlag(0.5), 0.5, 1, 0, tvar * 0.5 );
-	verbSig = sig[[6,7,6,7]];
+	verbSig = sig[[6,6,7,7]];
 	sig = sig[..5];
 	sig = sig.collect({ |item|
 		RoundPan.ar( 6, item, LFDNoise3.kr(0.1) * 2 );
