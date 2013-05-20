@@ -23,13 +23,13 @@
 					[ \bufSoundFile, 
 						[ \soundFile, evt.paths.en +/+ voices.choose +/+ 
 							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
-					[ \output, [ \bus, 3.rand ] ]
+					[ \output, [ \bus, 6.rand ] ]
 				).gain_(-12).useSndFileDur,
 				UChain( i * 2, 1, 
 					[ \bufSoundFile, 
 						[ \soundFile, evt.paths.nl +/+ voices.choose +/+ 
 							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
-					[ \output, [ \bus, 3.rand ] ]
+					[ \output, [ \bus, 6.rand ] ]
 				).gain_(-12).useSndFileDur,
 			];
 			chains.do( _.startTime_( z ) );

@@ -5,7 +5,7 @@
 
 ~shesme.ikzoekjeniet.which = \langzaam;
 
-~shesme.ikzoekjeniet.verbOut = 0;
+~shesme.ikzoekjeniet.verbOut = 6;
 
 ~shesme.ikzoekjeniet.loadBuffers = { |evt, action|
 	evt.buffers = ();

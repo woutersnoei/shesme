@@ -21,13 +21,13 @@ q.verb.font = Font( Font.defaultSansFace, 10 );
 q.verb.active = 0;
 q.verb.n = 6; // number of channels
 q.verb.fftsize= 2048; 
-q.verb.amp = 0.125;
+q.verb.amp = 0.1;
 q.verb.preDelay = 0;
-q.verb.dur = 1;
+q.verb.dur = 0.8;
 q.verb.leak = 0.33;
 q.verb.private = false;
 q.verb.out = 6;
-q.verb.dry = 0;
+q.verb.dry = 0.4;
 
 q.verb.offset = 22; // eucon slider
 
@@ -44,10 +44,11 @@ SynthDef( "ws_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, ou
 	input = RemoveBadValues.ar(input);
 	dry = dry * input;
 	dry = BHiCut.ar( dry, dryhicut, 1 );
+	dry = DelayN.ar(dry, 0.25, preDelay );
 	input = input + (input.sum * leak ) * env * amp ;
 	input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
 	input = BLowShelf.ar( input, lowshelfFreq, 1, lowshelf );
-	input = DelayC.ar(input, 0.25, preDelay );
+	input = DelayN.ar(input, 0.25, preDelay );
 	sig = bufs.collect({ |sp, i| 
 		PartConv.ar(input[i], fftsize, sp, 0.5); 
 	});
