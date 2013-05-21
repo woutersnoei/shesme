@@ -20,10 +20,10 @@
 	evt.n.makeGui;
 };
 
-~shesme.dataNetwork.bend1range = [0.5,0.7];
-~shesme.dataNetwork.bend2range = [0.45,0.63];
-~shesme.dataNetwork.press1range = [0.3,0.9];
-~shesme.dataNetwork.press2range = [0,0.5];
+~shesme.dataNetwork.bend1range = [0.45,0.65];
+~shesme.dataNetwork.bend2range = [0.55,0.75];
+~shesme.dataNetwork.press1range = [0.4,0.9];
+~shesme.dataNetwork.press2range = [0.5,1];
 
 ~shesme.dataNetwork.startRegistering = { |evt|
 	if( evt.n.notNil ) {
