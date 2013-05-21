@@ -91,7 +91,7 @@
 	evt.views = ();
 	ctrl = SimpleController( evt.vals );
 	[1,2].collect({ |i|
-		[ "press", "bend", "x", "y", "z", "d" ].collect({ |item| (item ++ i).asSymbol });
+		[ "bend", "press", "x", "y", "z", "d" ].collect({ |item| (item ++ i).asSymbol });
 	}).flatten(1).do({ |item|
 		var view;
 		view = EZSmoothSlider( evt.window, (evt.window.bounds.width - 8) @ 16, item, 
