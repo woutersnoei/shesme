@@ -24,7 +24,10 @@
 
 [ 
 	\amp, 0.1, \amp.asSpec, 
+	\duck, 0, [0,1].asSpec,
+	\pan, [-1,1], [-1,1].asSpec.asRangeSpec,
 	\speed, 3, [0,200,4].asSpec, 
+	\spvar, true, BoolSpec(true), 
 	\filter, 0, [-1,1, \lin,0,0].asSpec, 
 	\verb, 0, [0,1].asSpec 
 ].clump(3).do({ |array|
@@ -44,7 +47,7 @@
 */
 
 (
-SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, filter = 0, verb = 0, gate = 1|
+SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, spvar = 1, amp = 0.1, filter = 0, verb = 0, gate = 1, pan = #[-1,1], duck = 0|
 		var sig, verbSig;
 		/*
 		speed = (LFTri.kr(LFDNoise3.kr(0.1).exprange(0.01,0.1), -0.5 ).range(0,1) ** 3)
@@ -52,13 +55,15 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, fi
 		*/
 		//speed = speed.varlag(1);
 		
-		amp = amp.lag(0.1,4);
+		amp = amp * duck.linlin(0,1,1,-0.1,\none).lag(0.1,4).max(0);
 			
 		sig = buffers.collect({ |buf|
-			GrainBuf.ar(6, Dust.ar( speed ), 0.2, buf, 
+			GrainBuf.ar(6, 
+				if( spvar, Dust.ar( speed ), Impulse.ar( speed ) ),
+				0.2, buf, 
 				WhiteNoise.ar.exprange(0.95,1/0.95) * speed.linlin(5,100,-1,3,\minmax).midiratio, 
 				WhiteNoise.ar.range(0,1), 
-				pan: WhiteNoise.ar 
+				pan: WhiteNoise.ar.range(*pan) 
 			);
 		}).sum;
 		sig = BLowCut.ar( sig, filter.clip(0,1).varlag(2).linexp(0,1,20,5000,\minmax), 3 );
@@ -72,7 +77,7 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, fi
 
 ~shesme.mumbling.start = { |evt|
 	evt.end;
-	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \speed, evt.speed ? 3, \filter, 0, \verb, evt.verb ? 0 ] ); 
+	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \duck, evt.duck ? 0, \pan, evt.pan, \speed, evt.speed ? 3, \spvar, evt.spvar ? true, \filter, evt.filter ? 0, \verb, evt.verb ? 0 ] ); 
 	evt.active = true;
 };
 
