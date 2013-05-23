@@ -66,7 +66,7 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, amp = 0.1, fi
 		verbSig = FreeVerb.ar( sig, 1, Rand(0.6,0.8), 0.5 );
 		verbSig = PitchShift.ar( verbSig, 0.1, 1, 0.01, 0.1 );
 		sig = (sig * (1-verb)) + (verbSig * verb);
-		Out.ar(0, sig * amp.lag(0.1) * Env.cutoff(2).kr(2,gate) );
+		Out.ar(0, sig * amp.lag(0.1) * Env.cutoff(0.1).kr(2,gate) );
 }).load(s);
 );
 
