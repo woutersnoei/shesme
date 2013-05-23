@@ -9,13 +9,15 @@
 };
 
 ~shesme.tttt.amp = 0.1;
+~shesme.tttt.pan = [-1,1];
 ~shesme.tttt.transpose = 0;
 ~shesme.tttt.fadeOut = 0;
 ~shesme.tttt.speed = 5;
 
-~shesme.tttt.specs = ~shesme.tttt.specs ? OEM();
+~shesme.tttt.specs = OEM();
 
 ~shesme.tttt.specs.amp = \amp.asSpec;
+~shesme.tttt.specs.pan = [-1,1].asSpec.asRangeSpec;
 ~shesme.tttt.specs.speed = [1,50,\exp,0,5].asSpec;
 ~shesme.tttt.specs.transpose = [-12,12,\lin,0,0].asSpec;
 ~shesme.tttt.specs.fadeOut = [0,1,\lin].asSpec;
@@ -51,7 +53,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 			Synth.sched( 0.2, "shesme_tttt", [ 	
 				\bufnum, sortedBuffers[ index ], 
 				\amp, (evt.amp ? 0.1)/evt.peaks[evt.buffers.indexOf( sortedBuffers[ index ] )],
-				\pan, pan.next, //0.5.rand2,
+				\pan, pan.next.linlin(-1,1,*evt.pan), //0.5.rand2,
 				\fadeOut, evt.fadeOut ? 0,
 				\offset, evt.peakTimes[evt.buffers.indexOf( sortedBuffers[ index ] )],
 				\rate, evt.transpose.midiratio * evt.freqs.mean / evt.freqs[
