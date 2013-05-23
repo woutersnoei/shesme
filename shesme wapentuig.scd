@@ -34,9 +34,21 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, gate = 1|
 	 ) * 3;
 	verb = sig[[6,7]];
 	sig = sig[..5];
+	//RandSeed.kr( Impulse.kr(0), 56789 );
+	//RandSeed.kr(MouseX.kr > 0.5, 12345);
+	//sig = sig.collect({ |item|
+	//RoundPan.ar( 6, sig.sum, LFDNoise3.kr(0.25,2) );
+	
+	sig = sig.sum;
+	
+	sig = RoundPan.ar( 6, sig, LFSaw.kr(0.025) );
+	
+	//}).sum;
+	/*
 	sig = sig.collect({ |item|
 		RoundPan.ar( 6, item, LFDNoise3.kr(0.25,2) );
 	}).sum;
+	*/
 	Out.ar( 0, sig * amp.lag(0.1) * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
@@ -44,7 +56,7 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, gate = 1|
 ~shesme.wapentuig.start = { |evt|
 	evt.end;
 	evt.synths = evt.buffers.collect({ |buf|
-		3.collect({
+		1.collect({
 			Synth( "shesme_wapentuig", [ \bufnum, buf, \amp, evt.amp ? 0.1, \pos, evt.pos ] );
 		})
 	}).flatten(1);
