@@ -91,7 +91,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 		((WhiteNoise.ar * rvar) + transpose).midiratio,
 		LFDNoise1.kr(0.25).range(*range),
 		4,
-		(WhiteNoise.ar * 0.05) + LFDNoise3.kr(0.125),
+		(WhiteNoise.ar * 0.05) + (LFDNoise3.kr(0.125/2) * 2),
 		if( useWinbuf, winbuf, -1 )
 	) / (overlap.sqrt).max(1).lag(1) * amp.lag(1);
 	
