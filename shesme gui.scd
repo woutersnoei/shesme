@@ -103,7 +103,7 @@
 
 ~shesme.makeWindow = { |evt, which, width = 230, columns = 2|
 	which = which ? evt.names;
-	evt.window = Window( "shesme controls", Rect(550, 250,(width+14) * columns, 750) ).front;
+	evt.window = Window( "shesme controls", Rect(550, 250,(width+14) * columns, 800) ).front;
 	evt.window.addFlowLayout;
 	evt.composite = EZCompositeView( evt.window, (width+8) @ evt.window.bounds.height );
 	evt.composite.addFlowLayout;
