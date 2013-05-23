@@ -73,8 +73,9 @@
 					evt.vals[ item ] ? 0.5;
 				});
 				dvals = oldvals - vals;
-				evt.vals[ \d1 ] = dvals[..2].mean + 0.5; 
-				evt.vals[ \d2 ] = dvals[3..].mean + 0.5; 
+				dvals = dvals.abs;
+				evt.vals[ \d1 ] = dvals[..2].mean; 
+				evt.vals[ \d2 ] = dvals[3..].mean; 
 				oldvals = vals;
 			};
 		}).start;
@@ -167,5 +168,6 @@
 ~shesme.dataNetwork.startPython;
 ~shesme.dataNetwork.startNetwork;
 ~shesme.dataNetwork.startRegistering;
+~shesme.dataNetwork.makeWindow;
 */
 )
