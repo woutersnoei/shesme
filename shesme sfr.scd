@@ -93,7 +93,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 		4,
 		(WhiteNoise.ar * 0.05) + (LFDNoise3.kr(0.125/2) * 2),
 		if( useWinbuf, winbuf, -1 )
-	) / (overlap.sqrt).max(1).lag(1) * amp.lag(1);
+	) / (overlap.sqrt).max(1).lag(1) * (amp - 0.05).lag(40,0.1).max(0);
 	
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,300,20000,\minmax),3 );
