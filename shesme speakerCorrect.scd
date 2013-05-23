@@ -7,8 +7,8 @@
 SynthDef( "shesme_speakerCorrect", {
 	var in;
 	in = In.ar(0,10);
-	ReplaceOut.ar(0, (Limiter.ar( BLowCut.ar( in[..5], 200 ), -24.dbamp, 0.125 ) * 14.dbamp) ++
-		DelayN.ar( in[6..], 0.25,0.25 ) 
+	ReplaceOut.ar(0, (Limiter.ar( BLowCut.ar( in[..5], 200 ), -24.dbamp, 0.1 ) * 14.dbamp) ++
+		DelayN.ar( in[6..], 0.2,0.2 ) 
 	);
 }).load(s);
 
