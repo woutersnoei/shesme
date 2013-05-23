@@ -24,7 +24,7 @@
 
 [ 
 	\amp, 0.1, \amp.asSpec, 
-	\speed, 3, [0,200,-1.5].asSpec, 
+	\speed, 3, [0,200,4].asSpec, 
 	\filter, 0, [-1,1, \lin,0,0].asSpec, 
 	\verb, 0, [0,1].asSpec 
 ].clump(3).do({ |array|
