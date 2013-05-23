@@ -37,6 +37,8 @@
 ~shesme.sfr.specs = OEM();
 
 [ 	\amp, 0.1, \amp.asSpec,
+	\duck, 0, [0,1].asSpec,
+	\pan, [-2,2], [-2,2].asSpec.asRangeSpec,
 	\transpose, 0, [-24,24,\lin,0,0].asSpec,
 	\rvar, 0, [0,12,\lin].asSpec,
 	\filter, 0, [-1,1,\lin,0,0].asSpec,
@@ -80,7 +82,7 @@
 (
 SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, convolve = 0, rvar = 0, 
 	overlap = 8, tvar = 1.5, speed = 10, range = #[0.1,0.9], gate = 1, fadeIn = 0.1, 
-	winbuf = 0, useWinbuf = 0|
+	winbuf = 0, useWinbuf = 0, pan = #[-2,2], duck = 0|
 	var sig, fft1, fft2;
 	var sig2, trigger;
 	
@@ -91,9 +93,11 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 		((WhiteNoise.ar * rvar) + transpose).midiratio,
 		LFDNoise1.kr(0.25).range(*range),
 		4,
-		(WhiteNoise.ar * 0.05) + (LFDNoise3.kr(0.125/2) * 2),
+		(WhiteNoise.ar * 0.05) + (LFDNoise3.kr(0.125/2).range(*pan)),
 		if( useWinbuf, winbuf, -1 )
-	) / (overlap.sqrt).max(1).lag(1) * (amp - 0.05).lag(40,0.1).max(0);
+	) / (overlap.sqrt).max(1).lag(1) 
+		* amp.lag(3)
+		* duck.linlin(0,1,1,-0.1,\none).lag(40,0.1).max(0);
 	
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,300,20000,\minmax),3 );
@@ -144,7 +148,7 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 	evt.end( fade );
 	evt.synths = evt[ (evt.mode ++ "_bufs").asSymbol ].collect({ |buf|
 		Synth( "shesme_sfr", [ \bufnum, buf, \fadeIn, fade, \winbuf, evt.winbuf ] ++ 
-			evt.getPairs([ 'amp', 'transpose', 'rvar', 'filter', 'convolve', 'overlap', 'tvar', 'speed', 'range', 'useWinbuf' ])
+			evt.getPairs([ 'amp', 'duck', 'pan', 'transpose', 'rvar', 'filter', 'convolve', 'overlap', 'tvar', 'speed', 'range', 'useWinbuf' ])
 		);
 	});
 	evt.active = true;
