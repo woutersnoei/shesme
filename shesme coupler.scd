@@ -29,21 +29,23 @@
 			} { spec.isFunction } {
 				getValue = { |val| spec.value( val ); };
 			};
+			if( func.isKindOf( ActionFunc ) ) {
+				func.action = { |val| if( val.notNil ) { 
+					~shesme[ which ].mapSet( key, val ); 
+					} 
+				};
+				func.value( getValue.( val ) );
+			} {
+				 ~shesme[ which ].mapSet( key, getValue.( val ) );
+			};
 		} {
 			func.value( ~shesme[ which ], key, val );
-		};
-		
-		if( func.isKindOf( ActionFunc ) ) {
-			func.action = { |val| if( val.notNil ) { ~shesme[ which ].mapSet( key, val ); } };
-			func.value( getValue.( val ) );
-		} {
-			 ~shesme[ which ].mapSet( key, getValue.( val ) );
 		};
 	});
 };
 
 ~shesme.coupler[ \updateFunc ] = ~shesme.coupler[ \updateFunc ]  ?? { { |obj, key, val|
-	~shesme.coupler.performCurrent( key, val );
+	{ ~shesme.coupler.performCurrent( key, val ); }.try;
 } };
 
 ~shesme.coupler.start = { |evt|
