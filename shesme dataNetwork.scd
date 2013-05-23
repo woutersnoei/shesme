@@ -114,56 +114,6 @@
 	evt.makeWindow;
 };
 
-~shesme = ~shesme ? EM();
-
-~shesme.coupler = ~shesme.coupler ? EM();
-
-~shesme.coupler.current = EM();
-
-~shesme.coupler.settings = EM();
-
-~shesme.coupler.performCurrent = { |evt, sensor = 'x1', val = 0|
-	evt.current[ sensor ].do({ |array|
-		var which, key, func;
-		#which, key, func = array;
-		case { func.isNil } {
-			 ~shesme[ which ].mapSet( key, val );
-		} { func.isKindOf( Spec ) } {
-			~shesme[ which ].mapSet( key, func.unmap( val ) );
-		} { func.isKindOf( Collection ) } {
-			~shesme[ which ].mapSet( key, 
-				val.linlin( func[0] ? 0, func[1] ? 1, func[2] ? 0, func[3] ? 1, \minmax ) 
-			);
-		} {
-			func.value( ~shesme[ which ], key, val );
-		};
-	});
-};
-
-~shesme.coupler[ \updateFunc ] = ~shesme.coupler[ \updateFunc ]  ?? { { |obj, key, val|
-	~shesme.coupler.performCurrent( key, val );
-} };
-
-~shesme.dataNetwork.vals.addDependant( ~shesme.coupler[ \updateFunc ] );
-
-/*
-~shesme.dataNetwork.vals.removeDependant( ~shesme.coupler[ \updateFunc ] );
-~shesme.coupler[ \updateFunc ] = nil;
-*/
-
-~shesme.coupler.couple = { |evt, sensor = 'x1', which = 'tttt', key = 'speed', func|
-	evt.current[ sensor ] = evt.current[ sensor ].add( [ which, key, func ] );
-};
-
-~shesme.coupler.uncouple = { |evt, sensor = 'x1', which = 'tttt', key = 'speed'|
-	var removeThese;
-	removeThese = evt.current[ sensor ] !? _.select({ |item| 
-		(item[0] == which) && (item[1] == key)
-	});
-	removeThese.do({ |item| evt.current[ sensor ].remove( item ) });
-	if( evt.current[ sensor ].size == 0 ) { evt.current[ sensor ] = nil };
-};
-
 /*
 ~shesme.dataNetwork.startPython;
 ~shesme.dataNetwork.startNetwork;
