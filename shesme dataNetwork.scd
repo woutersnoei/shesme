@@ -90,7 +90,9 @@
 
 ~shesme.dataNetwork.makeWindow = { |evt|
 	var ctrl;
-	evt.window = Window("shesme sensors", Rect(1045, 605, 250, 300) ).front;
+	evt.window = Window("shesme sensors", Rect(
+		Window.screenBounds.width - 250, 605, 250, 300) 
+	).front;
 	evt.window.addFlowLayout;
 	evt.window.onClose_({ ctrl.remove });
 	evt.views = ();
