@@ -1,4 +1,24 @@
-EM( 'coupler', OEM( 'dress', EM( 'current', EM( 'd2', [ [ 'sfr', 'duck', [ 0.15, 0.25, 0, 1 ], nil ], [ 'mumbling', 'duck', [ 0.1, 0.3, 1, 0 ], nil ], [ 'mumbling', 'filter', [ 0.3, 0.8, 0.97, 0.2 ], nil ] ] ) ), 'off', EM( 'current', EM(  ) ), 'climbing', EM( 'current', EM( 'd1', [ [ 'mumbling', 'speed', [ 0.025, 0.1, 0, 0.4 ], nil ] ], 'press1', [ [ 'tttt', 'speed', [ 0.75, 0.9 ], nil ] ] ) ) ), 'broken', OEM(  ), 'laughing', OEM(  ), 'notes', OEM(  ), 
+EM( 'coupler', OEM( 'dress', EM( 'current', EM( 'd2', [ [ 'sfr', 'duck', [ 0.15, 0.25, 0, 1 ], nil ], [ 'mumbling', 'duck', [ 0.1, 0.3, 1, 0 ], nil ], [ 'mumbling', 'filter', [ 0.3, 0.8, 0.97, 0.2 ], nil ] ] ) ), 'off', EM( 'current', EM(  ) ), 'climbing', EM( 'current', EM( 'd1', [ [ 'mumbling', 'speed', [ 0.025, 0.1, 0, 0.4 ], nil ] ], 'press1', [ [ 'tttt', 'speed', [ 0.75, 0.9 ], nil ] ] ) ), 'rhythm', EM( 'current', EM( 'z2', [ [ 'broken', 'amp', { |which, key, val|
+			if( which.active == true ) {
+				if( val < 0.4 ) {
+					which.end;
+				};
+			} {
+				if( val > 0.6 && { ~shesme.dataNetwork.vals[ \d2 ] < 0.05 } ) {
+					which.start;
+				};
+			};
+		}, nil ], [ 'mumbling', 'amp', { |which, key, val|
+			if( which.active == true ) {
+				if( val > 0.6 && { ~shesme.dataNetwork.vals[ \d2 ] < 0.05 } ) {
+					which.end;
+				};
+			} {
+				if( val < 0.4 ) {
+					which.start;
+				};
+			};
+		}, nil ] ] ) ) ), 'broken', OEM(  ), 'laughing', OEM(  ), 'notes', OEM(  ), 
   'words', OEM(  ), 'chords', OEM(  ), 'sfr', OEM( 'sss', EM( 'transpose', 1.6849865951743, 'useWinbuf', false, 'rvar', 0.0, 'speed', 11.370971921683, 
   'tvar', 1.5, 'range', [ 0.1, 0.9 ], 'mode', 's', 'overlap', 8.0, 'convolve', 0.0, 
   'filter', 0.35497654155496 ), 'rrr', EM( 'transpose', 0.0, 'useWinbuf', false, 'rvar', 0.0, 'speed', 11.370971921683, 
