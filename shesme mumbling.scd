@@ -16,6 +16,11 @@
 				"\t% : %\n".postf( buf.bufnum, buf.path.basename );
 				buf;
 			});
+		cond.test = false;
+		evt.winenv = Env([0,1,1,0,0], [0.01,0.5,0.01,0.48], [4,-4]);
+		evt.winbuf = Buffer.sendCollection(s, evt.winenv.discretize, 1, 
+			action: { cond.test = true; cond.signal; } );
+		cond.wait;
 		action.value;
 	}.fork
 };
@@ -29,6 +34,7 @@
 	\speed, 3, [0,200,4].asSpec, 
 	\spvar, true, BoolSpec(true), 
 	\filter, 0, [-1,1, \lin,0,0].asSpec, 
+	\useWinbuf, false, BoolSpec(false),
 	\verb, 0, [0,1].asSpec 
 ].clump(3).do({ |array|
 	var key, value, spec;
@@ -47,7 +53,7 @@
 */
 
 (
-SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, spvar = 1, amp = 0.1, filter = 0, verb = 0, gate = 1, pan = #[-1,1], duck = 0|
+SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, spvar = 1, amp = 0.1, filter = 0, verb = 0, gate = 1, pan = #[-1,1], duck = 0, winbuf = 0, useWinbuf = 0|
 		var sig, verbSig;
 		/*
 		speed = (LFTri.kr(LFDNoise3.kr(0.1).exprange(0.01,0.1), -0.5 ).range(0,1) ** 3)
@@ -63,7 +69,8 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, spvar = 1, am
 				0.2, buf, 
 				WhiteNoise.ar.exprange(0.95,1/0.95) * speed.linlin(5,100,-1,3,\minmax).midiratio, 
 				WhiteNoise.ar.range(0,1), 
-				pan: WhiteNoise.ar.range(*pan) 
+				pan: WhiteNoise.ar.range(*pan),
+				envbufnum: if( useWinbuf, winbuf, -1 )
 			);
 		}).sum;
 		sig = BLowCut.ar( sig, filter.clip(0,1).varlag(2).linexp(0,1,20,5000,\minmax), 3 );
@@ -77,7 +84,7 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, spvar = 1, am
 
 ~shesme.mumbling.start = { |evt|
 	evt.end;
-	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \duck, evt.duck ? 0, \pan, evt.pan, \speed, evt.speed ? 3, \spvar, evt.spvar ? true, \filter, evt.filter ? 0, \verb, evt.verb ? 0 ] ); 
+	evt.sn = Synth( "shesme_mumbling", [ \buffers, evt.buffers, \amp, evt.amp ? 0.1, \duck, evt.duck ? 0, \pan, evt.pan, \speed, evt.speed ? 3, \spvar, evt.spvar ? true, \filter, evt.filter ? 0, \verb, evt.verb ? 0, \winbuf, evt.winbuf, \useWinbuf, evt.useWinbuf ? 0 ] ); 
 	evt.active = true;
 };
 
