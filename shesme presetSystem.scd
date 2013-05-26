@@ -15,7 +15,7 @@
 			preset = EM();
 			evt.specs.keys.do({ |key|
 				if( key != \amp ) {
-					preset[ key ] = evt[ key ];
+					preset[ key ] = evt[ key ].deepCopy;
 				};
 			});
 			~shesme.presetSystem.presets[ name ][ key ] = preset;
@@ -27,7 +27,7 @@
 			};
 			if( dict.notNil ) {
 				dict.keysValuesDo({ |key, value|
-					evt.perform( key.asSetter, value );
+					evt.perform( key.asSetter, value.deepCopy );
 				});
 			};
 		};
@@ -57,10 +57,17 @@
 	};
 };
 
+~shesme.presetSystem.readAdd = { |evt|
+	if( File.exists(~shesme.path +/+ "presets.scd") ) {
+		evt.presets = evt.presets ++ (~shesme.path +/+ "presets.scd").load;
+	};
+};
+
 ~shesme.presetSystem.read;
 
 /*
 ~shesme.presetSystem.save;
 ~shesme.presetSystem.read;
+~shesme.presetSystem.readAdd; // use if a new name was added to presets
 */
 )
