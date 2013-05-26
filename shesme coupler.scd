@@ -7,6 +7,8 @@
 
 ~shesme.coupler.settings = EM();
 
+~shesme.coupler.specs = OEM( \current, CodeSpec(nil) );
+
 ~shesme.coupler.performCurrent = { |evt, sensor = 'x1', val = 0|
 	evt.current[ sensor ].do({ |array|
 		var which, key, func, spec;
@@ -50,10 +52,12 @@
 
 ~shesme.coupler.start = { |evt|
 	~shesme.dataNetwork.vals.addDependant( evt[ \updateFunc ] );
+	evt.active = true;
 };
 
 ~shesme.coupler.end = { |evt|
 	~shesme.dataNetwork.vals.removeDependant( evt[ \updateFunc ] );
+	evt.active = false;
 };
 
 /*
@@ -64,6 +68,7 @@
 ~shesme.coupler.couple = { |evt, sensor = 'x1', which = 'tttt', key = 'speed', func, spec, uncouple = true|
 	if( uncouple ) { evt.uncouple( which, key, sensor ); };
 	evt.current[ sensor ] = evt.current[ sensor ].add( [ which, key, func, spec ] );
+	evt.changed( \current, evt.current );
 };
 
 ~shesme.coupler.uncouple = { |evt, which, key, sensor|
@@ -81,6 +86,7 @@
 			});
 		});
 	});
+	evt.changed( \current, evt.current );
 };
 );
 
