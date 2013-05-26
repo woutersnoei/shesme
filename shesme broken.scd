@@ -51,7 +51,7 @@ SynthDef( "shesme_broken", { |bufnum = 0, amp = 0.1, pbrate = #[0.8,1.2], shiftv
 };
 
 ~shesme.broken.end = { |evt|
-	evt.synths.do(_.release(0.1));
+	evt.synths.do(_.release(0.05));
 	evt.synths = nil;
 	evt.active = false;
 };
