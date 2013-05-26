@@ -14,6 +14,7 @@
 	\mumbling,
 	\notes,
 	\opnieuw,
+	\pattern,
 	\rrrr,
 	\sfr,
 	\spiegel,
