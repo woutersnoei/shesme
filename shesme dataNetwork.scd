@@ -10,6 +10,8 @@
 
 ~shesme.dataNetwork.vals = ~shesme.dataNetwork.vals ? OEM();
 
+~shesme.dataNetwork.vals.ddecay = 0.25;
+
 ~shesme.dataNetwork.startPython = { 
 	"cd '%/ssdn_python-master/pydon'; python metapydonhive.py"
 			.format( ~shesme.path.dirname ).runInTerminal;
@@ -74,8 +76,10 @@
 				});
 				dvals = oldvals - vals;
 				dvals = dvals.abs;
-				evt.vals[ \d1 ] = dvals[..2].mean; 
-				evt.vals[ \d2 ] = dvals[3..].mean; 
+				evt.vals[ \d1 ] = dvals[..2].mean
+					.blend( evt.vals[ \d1 ] ? 0, evt.vals.ddecay ? 0.25 );
+				evt.vals[ \d2 ] = dvals[3..].mean
+					.blend( evt.vals[ \d2 ] ? 0, evt.vals.ddecay ? 0.25 );
 				oldvals = vals;
 			};
 		}).start;
@@ -86,7 +90,7 @@
 
 ~shesme.dataNetwork.makeWindow = { |evt|
 	var ctrl;
-	evt.window = Window("shesme sensors", Rect(1045, 605, 300, 244) ).front;
+	evt.window = Window("shesme sensors", Rect(1045, 605, 250, 300) ).front;
 	evt.window.addFlowLayout;
 	evt.window.onClose_({ ctrl.remove });
 	evt.views = ();
@@ -102,6 +106,12 @@
 			view.value = evt.vals[ item ];
 		});
 		evt.views[ item ] = view;
+	});
+	evt.ddecaySlider = EZSmoothSlider( evt.window, (evt.window.bounds.width - 8) @ 16, "ddecay", 
+			[0,1].asSpec, { |sl| evt.vals.ddecay = sl.value }, evt.vals.ddecay ? 0.25);
+	evt.ddecaySlider.view.resize_(2);
+	ctrl.put( \ddecay, {
+		evt.ddecaySlider.value = evt.vals.ddecay;
 	});
 };
 
@@ -119,5 +129,6 @@
 ~shesme.dataNetwork.startNetwork;
 ~shesme.dataNetwork.startRegistering;
 ~shesme.dataNetwork.makeWindow;
+~shesme.dataNetwork.vals.ddecay = 0.25;
 */
 )
