@@ -10,13 +10,17 @@
 	evt.specs[ what.asSymbol.asGetter ].asSpec.unmap( evt.perform( what.asSymbol.asGetter ) );
 };
 
+~shesme.getWindowHeightFor = { |ev, which = 'tttt'|
+	(((ev[ which ] !? _.specs).size + 1)* 18)
+};
+
 ~shesme.makeWindowFor = { |ev, which = 'tttt', parent, width = 250|
 	var specs, evt, ctrl;
 	var path;
 	evt = ev[ which ];
 	specs = evt !? _.specs;
 	evt.parent = ev.parentEvent;
-	evt.composite = EZCompositeView( parent, (width+8)@((specs.size + 1)* 18) );
+	evt.composite = EZCompositeView( parent, (width+8)@( ev.getWindowHeightFor( ev, which ) ) );
 	evt.composite.view.background = Gradient( Color.gray(0.8), Color.gray(0.9), \v ) ;
 	ctrl = SimpleController( evt );
 	evt.composite.onClose = { ctrl.remove };
@@ -101,9 +105,9 @@
 	evt.composite;
 };
 
-~shesme.makeWindow = { |evt, which, width = 230, columns = 2|
+~shesme.makeWindow = { |evt, which, width = 230, columns = 3|
 	which = which ? evt.names;
-	evt.window = Window( "shesme controls", Rect(550, 250,(width+14) * columns, 850) ).front;
+	evt.window = Window( "shesme controls", Rect(550, 250,(width+14) * columns, 750) ).front;
 	evt.window.addFlowLayout;
 	evt.composite = EZCompositeView( evt.window, (width+8) @ evt.window.bounds.height );
 	evt.composite.addFlowLayout;
@@ -113,6 +117,7 @@
 		evt.composite.decorator.nextLine;
 		if( evt.composite.decorator.top >= (evt.composite.bounds.height - 5) ) {
 			comp.view.remove;
+			"view removed for %\n".postf( item );
 			evt.composite = EZCompositeView( evt.window, width+8 @ evt.window.bounds.height );
 			evt.composite.addFlowLayout;
 			comp = evt.makeWindowFor( item, evt.composite, width );
