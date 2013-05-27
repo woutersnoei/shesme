@@ -14,7 +14,7 @@
 
 [ 
 	\amp, 0.1, \amp.asSpec, 
-	\speed, 8, [1,16,\exp,1,8].asSpec, 
+	\speed, 8, [1,16,\exp,0,8].asSpec, 
 	\scream, 0, [0,1,\lin,1,0].asSpec,
 ].clump(3).do({ |array|
 	var key, value, spec;
@@ -25,16 +25,20 @@
 
 ~shesme.pattern[ \scream_ ] = { |evt, value = 0|
 	if( value > 0.5 ) {
-		evt[ \scream ] = value;
-		evt.pbind !? _.pause;
-		Synth( "shesme_pattern_scream", [ 
+		if( evt[ \scream ] <= 0.5 ) {
+			Synth( "shesme_pattern_scream", [ 
 				\bufnumx, evt.buffers.choose, 
 				\amp, evt.amp * 0.5,
 				\pan, 1.0.rand2
 			 ] );
-	} {
+			evt.pbind !? _.pause;
+		};
 		evt[ \scream ] = value;
-		evt.pbind !? _.resume;
+	} {
+		if( evt[ \scream ] > 0.5 ) {
+			evt.pbind !? _.resume;
+		};
+		evt[ \scream ] = value;
 	};
 };
 
@@ -46,7 +50,7 @@ SynthDef( "shesme_pattern_short", { |bufnum = 0, startPos = 0, sustain = 1, amp 
 		( BufFrames.kr(bufnum) - ((sustain / ratio)* SampleRate.ir) ) * startPos 
 	) * amp * gain * Line.ar(0,1,attack);
 	env = Env([1,1,0],[sustain - attack, attack]).ar(2);
-	sig = RoundPan.ar( 2, sig , pan );
+	sig = RoundPan.ar( 6, sig , pan );
 	Out.ar( 0, sig * env);
 	
 }).store;
@@ -62,7 +66,7 @@ SynthDef( "shesme_pattern_scream", { |bufnumx = 0, startPos = 0, amp = 0.1, pan 
 		( BufFrames.kr(bufnumx) - ((sustain / ratio)* SampleRate.ir) ) * startPos 
 	) * amp * Line.ar(0,1,attack);
 	env = Env([1,1,0],[sustain - attack, attack]).ar(2);
-	sig = RoundPan.ar( 2, sig , pan );
+	sig = RoundPan.ar( 6, sig , pan );
 	Out.ar( 0, sig * env);
 }).store;
 );
@@ -70,7 +74,7 @@ SynthDef( "shesme_pattern_scream", { |bufnumx = 0, startPos = 0, amp = 0.1, pan 
 ~shesme.pattern.start = { |evt|
 	evt.end;
 	evt.pbind = Pbind( 
-		\which, Pwrand( [ 0, 1, 2 ], [0.97,0.02,0.01], inf),
+		\which, Pwrand( [ 0, 1, 2], [0.98,0.0,0.02], inf),
 		\instrument, Pindex( 
 			[ "shesme_pattern_short", "shesme_pattern_scream", "shesme_pattern_short" ],
 			Pkey( \which ) 
@@ -80,12 +84,12 @@ SynthDef( "shesme_pattern_scream", { |bufnumx = 0, startPos = 0, amp = 0.1, pan 
 		], Pkey( \which ), inf ) / PenvirGet( \speed, 8, evt ),
 		\legato, Pbrown( 0.3, 0.6, 0.02,inf),
 		\index, (Pstutter( Pwhite(15,20), Pwhite(0,92) ) + 
-			Pbrown( 0, 92, 1.0 )).round(1).wrap(10,92),
+			Pbrown( 0, 92, 1.0 )).round(1).wrap(15,92),
 		\attack, Pwhite( 0.0, 1.0, inf ).linexp(0,1,0.005,0.05),
 		\bufnum, Pindex( ~shesme.notes.buffers, Pkey( \index ), 1 ), 
 		\bufnumx,	 Pseq( evt.buffers, inf ),
 		\gain, 1 / Pindex( ~shesme.notes.peaks/ ~shesme.notes.peaks.mean, Pkey( \index ), inf ),
-		\amp, Pwhite( 0.15,1,inf) * PenvirGet( \amp, 0.1, evt ),
+		\amp, Pwhite( 0.25,1,inf) * PenvirGet( \amp, 0.1, evt ),
 		\startPos, Pbrown( 0.2, 0.8, 0.05, inf ),
 		\bend, Prand( [-2, 1,0,0,1], inf ),
 		\pan, Pbrown( -1.0, 1.0, 0.5, inf ),
