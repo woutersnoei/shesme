@@ -93,10 +93,18 @@
 };
 
 ~shesme.words.start = {|evt|
+	evt.end;
+	evt.task = Task({
+		loop {
+			evt.playSingle( 16.rand, evt.which );
+			(5 rrand: 10).wait;
+		};
+	}).start;
 	evt.active = true;
 };
 
 ~shesme.words.end = {|evt|
+	evt.task.stop; evt.task = nil;
 	evt.active = false;
 };
 
@@ -121,5 +129,5 @@
 
 ~shesme.words.soft[2].choose.prepareAndStart;
 
-~shesme.words.playSingle
+~shesme.words.playSingle( 16.rand )
 */
