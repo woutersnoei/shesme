@@ -15,6 +15,8 @@
 		var action, getValue;
 		#which, key, func, spec = array;
 		
+		val = val.clip(0,1);
+		
 		if( func.isKindOf( Spec ) or: { func.isKindOf( Collection ) } ) {
 			spec = func; func = nil;
 		};
