@@ -10,7 +10,7 @@
 
 ~shesme.humming.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec, \ring, 0, [0,1].asSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \duck, 0, [0,1].asSpec, \ring, 0, [0,1].asSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.humming[ key ] = value;
@@ -22,7 +22,7 @@
 });
 
 (
-SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1, gate = 1|
+SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1, duck = 0, gate = 1|
 	var levels, sig;
 	levels = buffers.collect({ LFDNoise3.kr(0.1).exprange(-90.dbamp,1); });
 	levels = levels / levels.sum;
@@ -44,6 +44,7 @@ SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1
 			//sig = BLowCut.ar( sig, LFDNoise3.kr( 0.1 ).exprange(20, 1000 ), 3 );
 			RoundPan.ar( 6, sig, LFDNoise3.kr(0.025) * 2 );
 	}).sum;
+	sig = sig * duck.linlin(0,1,1,-0.1,\none).lag(20,3).max(0);
 	Out.ar( 0, sig * amp.lag(0.1) * Env.cutoff(2).kr(2,gate) );
 
 }).load(s);
@@ -58,6 +59,7 @@ SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1
 	evt.sn = Synth( "shesme_humming", [ 
 		\buffers, evt.buffers[[0,2,3,4,5,6,7,8]], 
 		\amp, evt.amp ? 0.1,
+		\duck, evt.duck ? 0,
 		\ring, evt.ring ? 0
 	] );
 	evt.active = true;
