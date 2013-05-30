@@ -28,13 +28,14 @@ q.verb.leak = 0.33;
 q.verb.private = false;
 q.verb.out = 6;
 q.verb.dry = 0.4;
+q.verb.pan = 1;
 
 q.verb.offset = 22; // eucon slider
 
 (
 SynthDef( "ws_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
-		fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400,
-		hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 400, leak = 0.05|
+		fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1,
+		hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05|
 	var bufs = \bufs.ir( 0!q.verb.n );
 	var input, sig, env;
 	env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 2 ).kr(2, gate );
@@ -54,15 +55,17 @@ SynthDef( "ws_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, ou
 	});
 	if( q.verb.n == 6 ) {
 		// 6 to 4 channels
-		sig[1] = sig[1] * 2.sqrt;
+		sig[2] = sig[2] * 2.sqrt;
 		sig[4] = sig[4] * 2.sqrt;
-		sig = [ sig[0] + sig[1], sig[2] + sig[1], sig[3] + sig[4], sig[5] + sig[4] ];
+		sig = [ sig[0], sig[1] + sig[2], sig[2] + sig[3] + sig[4], sig[5] + sig[4] ];
 		
-		dry[1] = dry[1] * 2.sqrt;
+		dry[2] = dry[2] * 2.sqrt;
 		dry[4] = dry[4] * 2.sqrt;
-		dry = [ dry[0] + dry[1], dry[2] + dry[1], dry[3] + dry[4], dry[5] + dry[4] ];
+		dry = [ dry[0], dry[1] + dry[2], dry[2] + dry[3] + dry[4], dry[5] + dry[4] ];
+		DelayN.ar(  dry, 0.015, 0.015 );
 	};
-	Out.ar( out, (sig * 2) + (dry * env) );
+	
+	Out.ar( out, ((sig * 2) + (dry * env)) * 0.5 );
 }).load(s);
 );
 
