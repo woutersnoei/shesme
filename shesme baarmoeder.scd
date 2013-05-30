@@ -3,6 +3,9 @@
 
 ~shesme.baarmoeder = ~shesme.baarmoeder ? EM();
 
+~shesme.baarmoeder.currentNoteDur = 0;
+~shesme.baarmoeder.currentNoteStartedAt = 0;
+
 ~shesme.baarmoeder.specs = OEM();
 
 [ \amp, 0.1, \amp.asSpec ].clump(3).do({ |array|
@@ -72,6 +75,8 @@
 			var bufs;
 			index = evt.buffers.size.asInt.xrand( index );
 			bufs = evt.buffers[index];
+			evt.currentNoteDur = bufs[0].duration;
+			evt.currentNoteStartedAt = Process.elapsedTime;
 			evt.synths = evt.synths.add(
 				Synth( "shesme_baarmoeder_%".format(bufs.size), [ \bufs, bufs, \amp, evt.amp ])
 				.freeAction_({ |synth|
