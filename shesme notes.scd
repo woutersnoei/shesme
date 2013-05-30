@@ -5,6 +5,9 @@
 
 ~shesme.notes.specs = OEM();
 
+~shesme.notes.currentNoteDur = 0;
+~shesme.notes.currentNoteStartedAt = 0;
+
 [ \amp, 0.1, \amp.asSpec, \filter, 0, [-1,1,\lin,0,0].asSpec, \fade, 0, [0,1].asSpec, \selection, [0,1], [0,1].asSpec.asRangeSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
@@ -63,6 +66,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.
 	evt.end;
 	evt.task = {
 		var index = 0;
+		var rate;
 		var freqIndex = 0;
 		var min, max;
 		loop {
@@ -75,11 +79,12 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.
 			};
 			freqIndex = (max - min).asInt.xrand(freqIndex - min) + min;
 			index = evt.freqSortedIndices[ freqIndex ];
+			rate = (evt.freqs[ index ].cpsmidi.round(1).midicps * (1.rand2.midiratio) ) 
+						/ evt.freqs[ index ];
 			evt.synths = evt.synths.add( 
 				Synth( "shesme_note", [ 
 					\bufnum, evt.buffers[index], 
-					\rate, (evt.freqs[ index ].cpsmidi.round(1).midicps * (1.rand2.midiratio) ) 
-						/ evt.freqs[ index ],
+					\rate, rate,
 					\pan, (-1.0 rrand: 1.0),
 					\fade, evt.fade ? 0,
 					\gain,  1 / (evt.peaks[ index ] / evt.peaks.mean),
@@ -89,6 +94,8 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.
 					 evt.synths.remove( synth );
 				});
 			);
+			evt.currentNoteDur = evt.buffers[index].duration / rate;
+			evt.currentNoteStartedAt = Process.elapsedTime;
 			(1.0 rrand: 14.0).wait;
 		};
 	}.fork;
