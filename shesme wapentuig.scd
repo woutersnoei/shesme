@@ -17,6 +17,7 @@
 [ 
 	\amp, 0.1, \amp.asSpec, 
 	\pos, 0, [0,1].asSpec, 
+	\filter, 0, [-1,1].asSpec,
 	\pan, [-2,2], [-2,2].asSpec.asRangeSpec 
 ].clump(3).do({ |array|
 	var key, value, spec;
@@ -30,7 +31,7 @@
 });
 
 (
-SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, pan = #[-2,2], gate = 1|
+SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, filter = 0, pan = #[-2,2], gate = 1|
 	var sig, verb;
 	pos = pos * BufFrames.kr(bufnum);
 	sig = PlayBufCF.ar( 8, bufnum, 1, 
@@ -38,7 +39,8 @@ SynthDef( "shesme_wapentuig", { |bufnum = 0, pos = 0, amp = 0.1, pan = #[-2,2], 
 	 ) * 3;
 	verb = sig[[6,7]];
 	sig = sig[..5];
-
+	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,10000,\minmax), 3 );
+	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,100,20000,\minmax),3 );
 	sig = sig.collect({ |item|
 		RoundPan.ar( 6, item, LFDNoise3.kr(0.25).range(*pan) );
 	}).sum;
