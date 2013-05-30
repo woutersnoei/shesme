@@ -26,7 +26,11 @@
 		});
 		em[ \levels ] = (item ++ "levels.scd").load;
 		em[ \uchains ] = em[ \paths ].collect({ |item|
-			UChain( [ \bufSoundFile, [ \soundFile, item ] ], \output ).useSndFileDur;
+			UChain( 
+				[ \bufSoundFile, [ \soundFile, item ] ], 
+				[ 'simpleEQ', [ 'lowMidHi', UEQ('simpleEQ', [ [ 150.0, 1.0, -9.0 ], [ 1000.0, 1.0, 0.0 ], [ 6000.0, 1.0, 0.0 ] ]) ] ],
+				\output 
+			).useSndFileDur;
 		});
 		evt.paths[ item.basename.asSymbol ] = em;
 	});
