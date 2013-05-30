@@ -75,7 +75,9 @@
 ~shesme.words.trigger = 1;
 
 ~shesme.words.trigger_ = { |evt, value = 1|
-	evt.playSingle;
+	if( evt.active == true ) {
+		evt.playSingle;
+	};
 	evt[ \trigger ] = value;
 };
 
