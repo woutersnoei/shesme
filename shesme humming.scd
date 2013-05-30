@@ -10,7 +10,8 @@
 
 ~shesme.humming.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec, \duck, 0, [0,1].asSpec, \ring, 0, [0,1].asSpec ].clump(3).do({ |array|
+[ \amp, 0.1, \amp.asSpec, \duck, 0, [0,1].asSpec, \ring, 0, [0,1].asSpec,
+	\speed, 1, [1,32,\exp].asSpec ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
 	~shesme.humming[ key ] = value;
@@ -22,25 +23,30 @@
 });
 
 (
-SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1, duck = 0, gate = 1|
+SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1, duck = 0, 
+		speed = 1, gate = 1|
 	var levels, sig;
-	levels = buffers.collect({ LFDNoise3.kr(0.1).exprange(-90.dbamp,1); });
+	levels = buffers.collect({ LFDNoise1.kr(0.1 * speed).exprange(-90.dbamp,1); });
 	levels = levels / levels.sum;
+	levels = levels * buffers.collect({ 
+		SinOsc.kr( Rand(2,12) ).range(speed.linlin(1,32,1,0),1);
+	});
 	ring = ring.varlag(2);
 	sig = buffers.collect({ |buf, i|
 			var sig, verb, basefr;
 			var pos, rate = 1;
-			sig = PlayBufCF.ar( 1, buf, rate, 
-				Dwhite(3,8), Dwhite(0, BufFrames.kr(buf)),
-				lag: 2 
+			sig = PlayBufCF.ar( 1, buf, rate * speed.linlin(1,32,1,1.25), 
+				Dwhite(3,8) / speed, Dwhite(0, BufFrames.kr(buf)),
+				lag: 2 / speed
 			 ) * 8 * levels[i];
+			 sig = BPeakEQ.ar( sig, 220, 2, -9 );
 			/*
 			basefr = LFDNoise3.kr(0.1).exprange(100,2000);
 			sig = (sig * (1-ring) ) + 
 				(sig * SinOsc.ar( basefr * LFDNoise3.kr(0.1.dup(2)).exprange(0.9,1/0.9)
 				).mean * ring );
 			*/
-			sig = FreqShift.ar( sig, LFDNoise3.kr(0.1, ring).range(-300,300) );
+			sig = FreqShift.ar( sig, LFDNoise3.kr(0.1, ring).range(-600,600).abs );
 			//sig = BLowCut.ar( sig, LFDNoise3.kr( 0.1 ).exprange(20, 1000 ), 3 );
 			RoundPan.ar( 6, sig, LFDNoise3.kr(0.025) * 2 );
 	}).sum;
@@ -60,6 +66,7 @@ SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1
 		\buffers, evt.buffers[[0,2,3,4,5,6,7,8]], 
 		\amp, evt.amp ? 0.1,
 		\duck, evt.duck ? 0,
+		\speed, evt.speed ? 1,
 		\ring, evt.ring ? 0
 	] );
 	evt.active = true;
