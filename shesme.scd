@@ -20,6 +20,7 @@
 //	\spiegel,
 	\tttt,
 	\tzu,
+	\quotes,
 	\wapentuig,
 	\words,
 	\verb,
