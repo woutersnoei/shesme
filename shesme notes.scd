@@ -89,7 +89,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.
 					 evt.synths.remove( synth );
 				});
 			);
-			(1.0 rrand: 16.0).wait;
+			(1.0 rrand: 14.0).wait;
 		};
 	}.fork;
 	evt.active = true;
