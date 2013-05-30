@@ -15,6 +15,7 @@
 [ 
 	\amp, 0.1, \amp.asSpec, 
 	\speed, 8, [1,16,\exp,0,8].asSpec, 
+	\ratio, 1, [0.25,4,\exp,0,1].asSpec,
 	\scream, 0, [0,1,\lin,1,0].asSpec,
 ].clump(3).do({ |array|
 	var key, value, spec;
@@ -26,12 +27,14 @@
 ~shesme.pattern[ \scream_ ] = { |evt, value = 0|
 	if( value > 0.5 ) {
 		if( evt[ \scream ] <= 0.5 ) {
-			Synth( "shesme_pattern_scream", [ 
-				\bufnumx, evt.buffers.choose, 
-				\amp, evt.amp * 0.5,
-				\pan, 1.0.rand2
-			 ] );
-			evt.pbind !? _.pause;
+			if( evt.active == true ) {
+				Synth( "shesme_pattern_scream", [ 
+					\bufnumx, evt.buffers.choose, 
+					\amp, evt.amp * 0.5,
+					\pan, 1.0.rand2
+				 ] );
+				evt.pbind !? _.pause;
+			};
 		};
 		evt[ \scream ] = value;
 	} {
@@ -72,7 +75,7 @@ SynthDef( "shesme_pattern_scream", { |bufnumx = 0, startPos = 0, amp = 0.1, pan 
 );
 
 ~shesme.pattern.start = { |evt|
-	evt.end;
+	evt.end( false );
 	evt.pbind = Pbind( 
 		\which, Pwrand( [ 0, 1, 2], [0.98,0.0,0.02], inf),
 		\instrument, Pindex( 
@@ -92,12 +95,20 @@ SynthDef( "shesme_pattern_scream", { |bufnumx = 0, startPos = 0, amp = 0.1, pan 
 		\amp, Pwhite( 0.25,1,inf) * PenvirGet( \amp, 0.1, evt ),
 		\startPos, Pbrown( 0.2, 0.8, 0.05, inf ),
 		\bend, Prand( [-2, 1,0,0,1], inf ),
+		\ratio, PenvirGet( \ratio, 1, evt ),
 		\pan, Pbrown( -1.0, 1.0, 0.5, inf ),
 	).play;
 	evt.active = true;
 };
 
-~shesme.pattern.end = { |evt|
+~shesme.pattern.end = { |evt, scream = true|
+	if( scream && { evt.pbind.isPlaying } ) {
+		Synth( "shesme_pattern_scream", [ 
+			\bufnumx, evt.buffers.choose, 
+			\amp, evt.amp * 0.5,
+			\pan, 1.0.rand2
+		 ] );
+	};
 	evt.pbind.stop;
 	evt.pbind = nil;
 	evt.active = false;
