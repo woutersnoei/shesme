@@ -67,6 +67,7 @@
 	evt.end;
 	evt.task = {
 		var index = 0;
+		thisThread.randSeed = 12345;
 		loop {
 			var bufs;
 			index = evt.buffers.size.asInt.xrand( index );
@@ -87,7 +88,7 @@
 ~shesme.baarmoeder.end = { |evt|
 	evt.task.stop;
 	evt.task = nil;
-	evt.synths.do(_.release);
+	//evt.synths.do(_.release);
 };
 )
 
