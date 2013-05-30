@@ -71,7 +71,7 @@
 
 ~shesme.words.amp = 0.1;
 ~shesme.words.which = \all;
-~shesme.words.index = 0;
+~shesme.words.index = (..15); // == all
 ~shesme.words.trigger = 1;
 
 ~shesme.words.trigger_ = { |evt, value = 1|
@@ -83,12 +83,14 @@
 
 ~shesme.words.specs.amp = \amp.asSpec;
 ~shesme.words.specs.which = ListSpec( [\all, \soft, \loud ] );
-~shesme.words.specs.index = ListSpec( (..15), 0, ~shesme.words.texts );
+~shesme.words.specs.index = ListSpec( [(..15), [0,9]] ++ (..15), 0, 
+	[ "all", "love / my love" ] ++ ~shesme.words.texts
+);
 ~shesme.words.specs.trigger = TriggerSpec( "start" );
 
 ~shesme.words.playSingle = { |evt, index, which|
 	var chain;
-	index = index ? evt.index;
+	index = (index ? evt.index).asCollection.choose;
 	which = which ? evt.which;
 	if( index < 16 ) {
 		chain = evt[ which ][index].choose.deepCopy;
@@ -102,7 +104,7 @@
 	evt.end;
 	evt.task = Task({
 		loop {
-			evt.playSingle( 16.rand, evt.which );
+			evt.playSingle( evt.index, evt.which );
 			(5 rrand: 10).wait;
 		};
 	}).start;
