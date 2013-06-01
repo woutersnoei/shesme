@@ -69,6 +69,9 @@ x = {
 ~shesme.mumbling.start;
 )
 
+/*
+// nano buttons 4
+
 ( // 5b: walking (first) 
 ~shesme.coupler.end;
 ~shesme.broken.start;
@@ -87,16 +90,20 @@ x = {
 ~shesme.broken.start;
 ~shesme.mumbling.end;
 )
+*/
 
 ( // 5e: rhythm walking fast switch / dance
 ~shesme.coupler.applyPreset( \rhythm );
 ~shesme.coupler.start;
+~shesme.sfr.applyPreset( \rollig );
 )
 
+/*
 ( // 5f: touch painting
-~shesme.sfr.applyPreset( \rollig );
 ~shesme.sfr.amp = 0.1;
-~shesme.sfr.start;
+if( ~shesme.sfr.active.not ) {
+	~shesme.sfr.start;
+};
 ~shesme.mumbling.amp = 0;
 ~shesme.broken.amp = 0;
 )
@@ -108,7 +115,7 @@ x = {
 ~shesme.mumbling.amp = 0.8;
 ~shesme.broken.amp = 0.2;
 )
-
+*/
 
 ( // 6a: walking next step
 ~shesme.coupler.end;
@@ -190,6 +197,7 @@ x = {
 ~shesme.coupler.end;
 ~shesme.coupler.applyPreset( \pattern );
 ~shesme.humming.end;
+~shesme.mumbling.duck = 1;
 ~shesme.sfr.end;
 ~shesme.pattern.speed = 8;
 ~shesme.pattern.ratio = 1;
@@ -248,7 +256,7 @@ x = {
 	
 	100.do({ |i|
 		~shesme.laughing.amp = i.linlin(0,20,0.75,0.33);
-		~shesme.laughing.filter = i.linlin(0,99,1,-0.75);
+		~shesme.laughing.filter = i.linlin(0,99,1,-1);
 		~shesme.laughing.pbrate = i.linexp(0,99,4,0.33);
 		0.1.wait
 	});
