@@ -58,6 +58,7 @@
 		sig = bufs.collect({ |item|
 			PlayBuf.ar( 1, item, doneAction:2) * 1.4;
 		});
+		sig = BHiShelf.ar( sig, 1500, 1, 6 ) * 0.8;
 		amps = LFDNoise3.kr( 0.5.dup(bufs.size) ).exprange( -24.dbamp, 1 );
 		amps = amps / amps.sum * 8;
 		sig = RoundPan.ar( 6, (sig * amps).sum * amp, LFDNoise3.kr( 0.05 ) * 2);
