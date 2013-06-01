@@ -58,7 +58,9 @@
 			};
 		});
 	});
-	evt.specs.index = ListSpec( (..15), 0, ~shesme.words.texts );
+	evt.specs.index = ListSpec( [(..15), [0,9]] ++ (..15), 0, 
+			[ "all", "love / my love" ] ++ ~shesme.words.texts
+		);
 	"loaded paths for ~shesme.words".postln;
 	action.value;
 };
