@@ -65,7 +65,7 @@ SynthDef( "ws_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, ou
 		DelayN.ar(  dry, 0.015, 0.015 );
 	};
 	
-	Out.ar( out, ((sig * 2) + (dry * env)) * 0.5 );
+	Out.ar( out, ((sig * 1) + (dry * env)) * 0.5 );
 }).load(s);
 );
 
