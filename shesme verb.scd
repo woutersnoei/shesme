@@ -173,7 +173,7 @@ q.verb.ctrl = SimpleController( q.verb )
 	.put( \dry, {
 		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
 			q.verb.views[ \dry ].value = q.verb.dry;
-			q.verb.sn.set( \dry, q.verb.amp ); 
+			q.verb.sn.set( \dry, q.verb.dry ); 
 		};
 	})
 	.put( \preDelay, {
