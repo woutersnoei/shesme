@@ -13,13 +13,69 @@
 ~shesme.verb.end = { |evt| q.verb.end; evt.active = false; };
 ~shesme.verb.active = { q.verb.active.booleanValue };
 
+(
+~shesme.verb.points = WFSPointGroup([ Point(-3.0199636301753, -2.3991457658338), Point(-3.0662992315935, 3.4351866052069), Point(0.19538190443064, 5.5229640321172), Point(2.700794138359, 4.2907668292747), Point(2.8421481851263, -0.0010956289577474), Point(2.9480826533323, -4.6469697196627), Point(-3.9597979746447, -5.939696961967), Point(-3.9597979746447, 5.939696961967), Point(3.9597979746447, 5.939696961967), Point(3.9597979746447, -5.939696961967) ]);
+);
+
+/*
+(
+WFSSpeakerConf.default = WFSSpeakerConf(); // hide speakerconf
+~shesme.verb.pointsGUI = ~shesme.verb.points.gui;
+~shesme.verb.pointsGUI.xyView.colors = (Color.blue ! 6) ++ (Color.web.brown ! 4);
+)
+
+"(\n~shesme.verb.points = " ++ ~shesme.verb.pointsGUI.object.cs ++ ";\n)";
+*/
+
+~shesme.verb.getVals = { |evt|
+	var quad, stereo;
+	evt.delays =  evt.points.positions[..5].collect({ |pos|
+		evt.points.positions[6..].collect({ |sp|
+			pos.dist(sp);
+		});
+	}) * (1/344);
+	
+	#quad, stereo = [ (6..9), [6,9] ].collect({ |sps|
+		evt.points.positions[..5].collect({ |pos|
+			var res = [], which, amt, angle = pos.angle;
+			evt.points.positions[sps].collect(_.angle).wrapExtend(sps.size+1)
+				.doAdjacentPairs({ |a,b,i|
+					a = a.wrap(angle, angle + 2pi);
+					b = b.wrap( a - 2pi, a );
+					amt = angle.linlin( a, b, 0,1,\none);
+					res = res.add( amt );
+					if( (amt >= 0) and: (amt < 1) ) {
+						which = i;
+					};
+				});
+			res.do({ |amt, i|
+				if( (amt >= 0) and: (amt < 1) ) {
+					which = i;
+				};
+			});
+			(res[ which ].linlin(0,1,-0.5,1.5).clip(0,1) + which);
+		});
+	});
+	
+	evt.panValuesQuad = quad;
+	evt.panValuesStereo = stereo;
+};
+
+~shesme.verb.getVals;
+
+/*
+~shesme.verb.delays;
+~shesme.verb.panValuesStereo;
+~shesme.verb.panValuesQuad;
+*/
+
 q = q ? EM();
 q.verb = q.verb ? EM();
 
 q.verb.font = Font( Font.defaultSansFace, 10 );
 
 q.verb.active = 0;
-q.verb.n = 6; // number of channels
+q.verb.n = 4; // number of channels
 q.verb.fftsize= 2048; 
 q.verb.amp = 0.1;
 q.verb.preDelay = 0;
@@ -29,21 +85,38 @@ q.verb.private = false;
 q.verb.out = 6;
 q.verb.dry = 0.4;
 q.verb.pan = 1;
+q.verb.quad = 1;
 
 q.verb.offset = 22; // eucon slider
 
 (
-SynthDef( "ws_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
-		fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1,
+SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
+		fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1, quad = 1,
 		hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05|
 	var bufs = \bufs.ir( 0!q.verb.n );
-	var input, sig, env;
+	var input, sig, env, ni = 6;
 	env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 2 ).kr(2, gate );
-	input = In.ar( 0 + (FirstPrivateBus.ir * private), bufs.size );
+	input = In.ar( 0 + (FirstPrivateBus.ir * private), ni );
 	//CheckBadValues.ar( input );
 	//input = input + WhiteNoise.ar(1.0e-9);
 	input = RemoveBadValues.ar(input);
-	dry = dry * input;
+	input = if( quad,
+		input.collect({ |sig, i|
+			var xx;
+			xx = PanAz.ar( q.verb.n, sig, ~shesme.verb.panValuesQuad[i] / 4 * 2, orientation: 0 );
+			~shesme.verb.delays[i].collect({ |delay, ix|
+				DelayN.ar( xx[ix], delay, delay );
+			});
+		}).sum,
+		input.collect({ |input, i|
+			var xx;
+			xx = Pan2.ar( input, ~shesme.verb.panValuesStereo[i]);
+			~shesme.verb.delays[i][[0,3]].collect({ |delay, ix|
+				DelayN.ar( xx[ix], delay, delay );
+			});
+		}).sum.insert(1, DC.ar(0)).insert(1, DC.ar(0))
+	);
+	dry = dry * input * 2;
 	dry = BHiCut.ar( dry, dryhicut, 1 );
 	dry = DelayN.ar(dry, 0.25, preDelay );
 	input = input + (input.sum * leak ) * env * amp ;
@@ -53,40 +126,9 @@ SynthDef( "ws_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, ou
 	sig = bufs.collect({ |sp, i| 
 		PartConv.ar(input[i], fftsize, sp, 0.5); 
 	});
-	if( q.verb.n == 6 ) {
-		// 6 to 4 channels
-		sig[2] = sig[2] * 2.sqrt;
-		sig[4] = sig[4] * 2.sqrt;
-		sig = [ sig[0], sig[1] + sig[2], sig[2] + sig[3] + sig[4], sig[5] + sig[4] ];
-		
-		dry[2] = dry[2] * 2.sqrt;
-		dry[4] = dry[4] * 2.sqrt;
-		dry = [ dry[0], dry[1] + dry[2], dry[2] + dry[3] + dry[4], dry[5] + dry[4] ];
-		DelayN.ar(  dry, 0.015, 0.015 );
-	};
-	
 	Out.ar( out, ((sig * 1) + (dry * env)) * 0.5 );
 }).load(s);
 );
-
-(
-SynthDef( "ws_verb%_sum".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
-		fftsize = 2048, private = 0, gate = 1, hishelf = 0, hishelfFreq = 1200|
-	var bufs = \bufs.ir( 0!q.verb.n );
-	var input, sig, env;
-	env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 3 ).kr(2, gate );
-	input = In.ar( 0 + (FirstPrivateBus.ir * private), bufs.size ).sum;
-	input = input * env;
-	input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
-	input = DelayC.ar(input, 0.25, preDelay );
-	sig = bufs.collect({ |sp, i| 
-		PartConv.ar(input, fftsize, sp, 0.5); 
-	});
-	
-	Out.ar( out, sig * amp * 2 );
-}).load(s);
-);
-
 
 q.verb.danStowel = {|evt| 
 	var ir, f;
@@ -130,13 +172,14 @@ q.verb.prepare = { |evt, action|
 q.verb.start = { |evt, endFirst = true|  // doesn't check if already started !!
 	if( endFirst ) { evt.end; };
 	evt.active = 1;
-	evt.sn = Synth( "ws_verb%".format( evt.n ), [
+	evt.sn = Synth( "ws_shesme_verb%".format( evt.n ), [
 		 		\amp, evt.amp, 
  		 		\preDelay, evt.preDelay,
  		 		\bufs, evt.irspectrum,
  		 		\fftsize, evt.fftsize,
  		 		\leak, evt.leak,
  		 		\private, evt.private.binaryValue,
+ 		 		\quad, evt.quad ? 1,
  		 		\out, evt.out ? 0,
  		 		\dry, evt.dry ? 0
  			 ], addAction: \addAfter );
@@ -153,7 +196,7 @@ q.verb.cmdPeriod = { |evt| if( evt.active == 1 ) { { evt.start( false ) }.defer(
 CmdPeriod.add( q.verb );
 
 // window and views
-q.verb.w = Window( "verb", Rect(146, 365, 113, 104)).front;
+q.verb.w = Window( "verb", Rect(146, 365, 113, 124)).front;
 q.verb.w.addFlowLayout;
 q.verb.views = ();
 
@@ -174,6 +217,12 @@ q.verb.ctrl = SimpleController( q.verb )
 		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
 			q.verb.views[ \dry ].value = q.verb.dry;
 			q.verb.sn.set( \dry, q.verb.dry ); 
+		};
+	})
+	.put( \quad, {
+		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
+			q.verb.views[ \quad ].value = q.verb.	quad;
+			q.verb.sn.set( \quad, q.verb.quad );
 		};
 	})
 	.put( \preDelay, {
@@ -220,6 +269,13 @@ q.verb.views[ \dry ] = SmoothSlider(  q.verb.w, 94@16,  ).value_( q.verb.dry ? 0
 	.action_({ |sl| 
 		q.verb.dry = sl.value;
 		q.verb.sn.set( \dry, q.verb.dry ); 
+	});
+	
+q.verb.views[ \quad ] = SmoothSlider(  q.verb.w, 94@16,  ).value_( q.verb.quad ? 1 )
+	.string_( " quad " )
+	.action_({ |sl| 
+		q.verb.quad = sl.value;
+		q.verb.sn.set( \quad, q.verb.quad ); 
 	});
 			
 StaticText( q.verb.w, 50@16 ).string_( "predelay" ).align_( \right ).font_( q.verb.font );
