@@ -54,6 +54,8 @@ x = {
 
 
 ( // 4: open dress
+~shesme.coupler.end;
+~shesme.tttt.end;
 ~shesme.notes.end;
 ~shesme.words.end;
 ~shesme.broken.amp = 0.2;
@@ -67,6 +69,7 @@ x = {
 ~shesme.mumbling.amp = 0.8;
 ~shesme.broken.end;
 ~shesme.mumbling.start;
+// -- nano buttons 4 --
 )
 
 /*
@@ -275,7 +278,7 @@ x = {
 
 
 ( // 10a: mumbling start
-~shesme.mumbling.applyPreset( \fragments );
+~shesme.mumbling.applyPreset( \breathe );
 ~shesme.mumbling.amp = 0.1;
 ~shesme.mumbling.start;
 ~shesme.laughing.filter = -1;
@@ -291,7 +294,7 @@ x = {
 ~shesme.baarmoeder.amp = 0;
 ~shesme.baarmoeder.start;
 x = { 
-	var dur = 60, amp = 0.15;
+	var dur = 60, amp = 0.05;
 	var spec = \amp.asSpec;
 	amp = spec.unmap( amp );
 	(dur * 10).do({ |i|
@@ -305,7 +308,7 @@ x = {
 ~shesme.quotes.selection = 4;
 
 
-( // 11: end
+( // 11: end 1
 ~shesme.mumbling.end;
 ~shesme.baarmoeder.end;
 x = {
@@ -315,8 +318,14 @@ x = {
 	"stopping in % seconds\n".postf( time.round(1) );
 	(time - 5).wait;
 	~shesme.quotes.end;
+	5.wait;
+	~shesme.baarmoeder.amp = 0.1;
+	q.verb.quad = 1;
+	~shesme.baarmoeder.start;
+	
 }.fork;
 )
 
+~shesme.baarmoeder.end;
 
 x.stop;
