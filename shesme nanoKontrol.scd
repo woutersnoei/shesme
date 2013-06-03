@@ -1,4 +1,4 @@
-NanoKONTROL()
+NanoKONTROL();
 
 NanoKONTROL.sliders[0][0].action = { |sl| q.verb.amp = \amp.asSpec.map( sl.value ) };
 
