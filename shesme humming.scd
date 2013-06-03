@@ -26,7 +26,7 @@
 SynthDef( "shesme_humming", { |buffers = #[0,0,0,0,0,0,0,0], ring = 0, amp = 0.1, duck = 0, 
 		speed = 1, gate = 1|
 	var levels, sig;
-	levels = buffers.collect({ LFDNoise1.kr(0.1 * speed).exprange(-90.dbamp,1); });
+	levels = buffers.collect({ LFDNoise1.kr(0.1 * speed).exprange(-70.dbamp,1); });
 	levels = levels / levels.sum;
 	levels = levels * buffers.collect({ 
 		SinOsc.kr( Rand(2,12) ).range(speed.linlin(1,32,1,0),1);
