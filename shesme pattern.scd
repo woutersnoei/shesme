@@ -69,7 +69,7 @@ SynthDef( "shesme_pattern_scream", { |bufnumx = 0, startPos = 0, amp = 0.1, pan 
 		( BufFrames.kr(bufnumx) - ((sustain / ratio)* SampleRate.ir) ) * startPos 
 	) * amp * Line.ar(0,1,attack);
 	env = Env([1,1,0],[sustain - attack, attack]).ar(2);
-	sig = RoundPan.ar( 6, sig , pan );
+	sig = RoundPan.ar( 6, sig * 1.75 , pan );
 	Out.ar( 0, sig * env);
 }).store;
 );
