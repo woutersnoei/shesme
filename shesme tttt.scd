@@ -29,7 +29,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 		(BufRateScale.kr(bufnum) / rate) * offset * SampleRate.ir, doneAction:2 
 	) * amp;
 	sig = sig * Env([1,1,0],[1-fadeOut, fadeOut] * ((BufDur.kr(bufnum) - offset)/rate), -12).ar(2);
-	sig = PanAz.ar( 6, BLowCut.ar( sig, 250, 2 ), pan );
+	sig = PanAz.ar( 6, BLowCut.ar( sig, 500, 2 ), pan );
 	OffsetOut.ar( 0, sig );
 }).store;
 );
