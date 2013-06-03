@@ -51,7 +51,7 @@ WFSSpeakerConf.default = WFSSpeakerConf(); // hide speakerconf
 		});
 	}) * (1/344);
 	
-	#quad, stereo = [ (6..9), [6,9] ].collect({ |sps|
+	#quad, stereo = [ (6..9), [7,8] ].collect({ |sps|
 		evt.points.positions[..5].collect({ |pos|
 			var res = [], which, amt, angle = pos.angle;
 			evt.points.positions[sps].collect(_.angle).wrapExtend(sps.size+1)
@@ -69,7 +69,7 @@ WFSSpeakerConf.default = WFSSpeakerConf(); // hide speakerconf
 					which = i;
 				};
 			});
-			(res[ which ].linlin(0,1,-0.5,1.5).clip(0,1) + which);
+			(res[ which ].linlin(0,1,-0.25,1.25).clip(0,1) + which);
 		});
 	});
 	
@@ -124,16 +124,17 @@ SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay 
 				DelayN.ar( xx[ix], delay, delay );
 			});
 		}).sum,
-		input.collect({ |input, i|
+		[ DC.ar(0) ] ++ input.collect({ |input, i|
 			var xx;
 			xx = Pan2.ar( input, ~shesme.verb.panValuesStereo[i]);
 			~shesme.verb.delays[i][[0,3]].collect({ |delay, ix|
 				DelayN.ar( xx[ix], delay, delay );
 			});
-		}).sum.insert(1, DC.ar(0)).insert(1, DC.ar(0))
+		}).sum ++ [ DC.ar(0) ]
 	);
-	dry = dry * input * 2;
-	dry = BHiCut.ar( dry, dryhicut, 1 );
+	dry = dry * input * 4;
+	//dry = BHiCut.ar( dry, dryhicut, 1 );
+	dry = BHiShelf.ar( dry, dryhicut, 1, -16 );
 	dry = DelayN.ar(dry, 0.25, preDelay );
 	input = input + (input.sum * leak ) * env * amp ;
 	input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
