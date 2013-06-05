@@ -127,7 +127,7 @@ SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay 
 		[ DC.ar(0) ] ++ input.collect({ |input, i|
 			var xx;
 			xx = Pan2.ar( input, ~shesme.verb.panValuesStereo[i]);
-			~shesme.verb.delays[i][[0,3]].collect({ |delay, ix|
+			~shesme.verb.delays[i][[1,2]].collect({ |delay, ix|
 				DelayN.ar( xx[ix], delay, delay );
 			});
 		}).sum ++ [ DC.ar(0) ]
