@@ -74,7 +74,7 @@ WFSSpeakerConf.default = WFSSpeakerConf(); // hide speakerconf
 	});
 	
 	evt.panValuesQuad = quad;
-	evt.panValuesStereo = stereo;
+	evt.panValuesStereo = [-1,-0.5,0,0.33,0.66,1]; // bypass stereo - doesn't sound right
 };
 
 ~shesme.verb.getVals;
