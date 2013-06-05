@@ -4,6 +4,8 @@ NanoKONTROL.sliders[0][0].action = { |sl| q.verb.amp = \amp.asSpec.map( sl.value
 
 NanoKONTROL.sliders[0][1].action = { |sl| q.verb.dry = \amp.asSpec.map( sl.value ) };
 
+NanoKONTROL.knobs[0][1].action = { |sl| q.verb.quad = sl.value; };
+
 NanoKONTROL.sliders[0][2].action = { |sl| 
 	~shesme.dataNetwork.vals[ \d2 ] = \amp.asSpec.map( sl.value ) 
 };
