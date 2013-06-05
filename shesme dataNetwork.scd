@@ -10,10 +10,12 @@
 
 ~shesme.dataNetwork.vals = ~shesme.dataNetwork.vals ? OEM();
 
-~shesme.dataNetwork.vals.which = 0;
+~shesme.dataNetwork.vals.which = 0; // johanne
+
+~shesme.dataNetwork.labels = [ "johanne", "behr" ];
 
 /*
-~shesme.dataNetwork.vals.which = 1;
+~shesme.dataNetwork.vals.which = 1; // behr
 */
 
 ~shesme.dataNetwork.vals.ddecay = 0.25;
@@ -128,13 +130,13 @@
 ~shesme.dataNetwork.makeWindow = { |evt|
 	var ctrl;
 	evt.window = Window("shesme sensors", Rect(
-		Window.screenBounds.width - 250, 605, 250, 300) 
+		Window.screenBounds.width - 164, 605, 160, 168) 
 	).front;
 	evt.window.addFlowLayout;
 	evt.window.onClose_({ ctrl.remove });
 	evt.views = ();
 	ctrl = SimpleController( evt.vals );
-	[1,2].collect({ |i|
+	[2].collect({ |i|
 		[ "bend", "press", "x", "y", "z", "d" ].collect({ |item| (item ++ i).asSymbol });
 	}).flatten(1).do({ |item|
 		var view;
@@ -151,6 +153,17 @@
 	evt.ddecaySlider.view.resize_(2);
 	ctrl.put( \ddecay, {
 		evt.ddecaySlider.value = evt.vals.ddecay;
+	});
+	evt.whichMenu = PopUpMenu( evt.window, (evt.window.bounds.width - 8) @ 16);
+	evt.whichMenu.resize_(2);
+	evt.whichMenu
+		.items_(evt.labels)
+		.action_({ |pu|
+			evt.vals[ \which ] = pu.value;
+		})
+		.value_( evt.vals.which );
+	ctrl.put( \which, {
+		{ evt.whichMenu.value = evt.vals.which; }.defer;
 	});
 };
 
