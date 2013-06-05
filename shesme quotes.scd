@@ -59,9 +59,9 @@ SynthDef( "shesme_quote", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0
 	fadeIn = Rand(0,1);
 	fadeOut = 1-fadeIn;
 	sig = PlayBuf.ar( 1, bufnum, rate, doneAction: 2 );
-	sig = BHiShelf.ar( sig, 6000, 1, 3 );
-	sig = BPeakEQ.ar( sig, 3000, 1, 9 );
-	sig = BPeakEQ.ar( sig, 300, 1, -4 );
+	sig = BHiShelf.ar( sig, 6000, 1, 4 );
+	sig = BPeakEQ.ar( sig, 2500, 1, 9 );
+	sig = BPeakEQ.ar( sig, 200, 1, -7 );
 	sig = BLowCut.ar( sig, filter.clip(0,1).varlag(Rand(3, 5)).linexp(0,1,20,5000,\minmax), 3 );
 	sig = BHiCut.ar( sig, filter.clip(-1,0).varlag(Rand(3, 5)).linexp(-1,0,300,20000,\minmax),3 );
 	sig = sig * amp * gain;
