@@ -3,13 +3,29 @@
 x.stop;
 )
 
+~shesme.gedicht.start;
 
-( // 1: climbing
+(
 ~shesme.mumbling.applyPreset( \low );
 ~shesme.coupler.applyPreset( \climbing );
 ~shesme.notes.fade = 0;
 ~shesme.mumbling.start;
 ~shesme.coupler.start;
+~shesme.words.applyPreset( \all );
+~shesme.quotes.selection = 0;
+)
+
+~shesme.words.start;
+
+~shesme.words.end;
+
+( // 1: climbing
+//~shesme.mumbling.applyPreset( \low );
+//~shesme.coupler.applyPreset( \climbing );
+//~shesme.notes.fade = 0;
+//~shesme.mumbling.start;
+//~shesme.coupler.start;
+~shesme.words.end;
 x = {
 	~shesme.notes.selection = (86/92).dup;
 	~shesme.notes.start;
@@ -60,9 +76,12 @@ x = {
 ~shesme.words.end;
 ~shesme.broken.amp = 0.2;
 ~shesme.broken.start;
+~shesme.mumbling.end;
+~shesme.mumbling.amp = 0.8;
+~shesme.mumbling.applyPreset( \rhythm );
 )
 
-
+/*
 ( // 5a: rhythm dance (first) / drop hand
 ~shesme.coupler.end;
 ~shesme.mumbling.applyPreset( \rhythm );
@@ -71,6 +90,7 @@ x = {
 ~shesme.mumbling.start;
 // -- nano buttons 4 --
 )
+*/
 
 /*
 // nano buttons 4
@@ -99,6 +119,7 @@ x = {
 ~shesme.coupler.applyPreset( \rhythm );
 ~shesme.coupler.start;
 ~shesme.sfr.applyPreset( \rollig );
+~shesme.sfr.pan = [ 0, 0 ];
 )
 
 /*
@@ -147,6 +168,7 @@ x = {
 	~shesme.sfr.applyPreset( \granular );
 	~shesme.sfr.amp = 0.35;
 	(1/end).wait;
+	0.2.wait;
 	~shesme.sfr.start;
 	0.33.wait;
 	~shesme.mumbling.end;
@@ -234,7 +256,7 @@ x = {
 ( //9b: laughing end
 ~shesme.sfr.applyPreset( \dripping );
 ~shesme.sfr.filter = 1;
-~shesme.sfr.amp = 0.1;
+~shesme.sfr.amp = 0.5;
 ~shesme.sfr.start;
 ~shesme.sfr.filter = 0.7;
 {
@@ -252,7 +274,14 @@ x = {
 }.fork;
 )
 
-( // 9c: filter down
+( // 9c: mumbling start
+~shesme.mumbling.end;
+~shesme.mumbling.applyPreset( \breathe );
+~shesme.mumbling.amp = 0.4;
+~shesme.mumbling.start;
+)
+
+( // 9d: filter down
 ~shesme.laughing.brassage = 0.75;
 x = {
 	3.wait;
@@ -276,19 +305,13 @@ x = {
 }.fork;
 )
 
-
-( // 10a: mumbling start
-~shesme.mumbling.applyPreset( \breathe );
-~shesme.mumbling.amp = 0.1;
-~shesme.mumbling.start;
-~shesme.laughing.filter = -1;
-)
-
 ( // 10b: quotes start
 ~shesme.quotes.start;
-~shesme.sfr.end;
+//~shesme.sfr.end;
 ~shesme.laughing.end;
 )
+
+//~shesme.sfr.end;
 
 ( // 10c: baarmoeder start
 ~shesme.baarmoeder.amp = 0;
