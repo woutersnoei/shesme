@@ -14,39 +14,50 @@
 
 ~shesme.gedicht.makeScore = { |evt|
 	var voices, z=0, waitPoints;
+	var buses;
+	buses = [0,5,1,4,2,3];
 	voices = [ "bauwien", "elsbeth", "jennifer", "marine", "michaela" ];
 	waitPoints = [ 6, 10, 14, 18, 21, 25, 30, 32, 36, 39, 43, 49 ] - 2;
+	thisThread.randSeed = 12345;
 	evt.score = UScore(
 		*53.collect({ |i|
 			var chains;
+			var numSpeakers, busx;
+			numSpeakers = (i.linlin( 0, 52, 2,6 ).round(1) - 1).asInt;
+			busx = buses[..numSpeakers].scramble[..1];
 			chains = [  UChain( i * 2,
 					[ \bufSoundFile, 
 						[ \soundFile, evt.paths.en +/+ voices.choose +/+ 
 							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
-					[ \output, [ \bus, 4.rand + 6 ] ]
-				).gain_(-24).useSndFileDur,
+					[ \output, [ \bus, busx[0] ] ]
+				).gain_(-10).useSndFileDur,
 				UChain( i * 2, 1, 
 					[ \bufSoundFile, 
 						[ \soundFile, evt.paths.nl +/+ voices.choose +/+ 
 							(i+1).asStringToBase(10,2) ++ ".wav" ] ],
-					[ \output, [ \bus, 4.rand + 6 ] ]
-				).gain_(-24).useSndFileDur,
+					[ \output, [ \bus, busx[1] ] ]
+				).gain_(-10).useSndFileDur,
 			];
 			chains.do( _.startTime_( z ) );
 			z = z + 2.max( chains.collect(_.dur).maxItem + 0.5 );
 			
 			if( waitPoints.includes( i ) ) {
-				//z = z + ((30 * 60) / waitPoints.size);
+				z = z + (30 / waitPoints.size);
 				chains = chains.add( 
-					UMarker(z - 0.1, 2, "pause", { |marker, score| 
+					UMarker(z - 0.1, 2, "marker", { |marker, score| 
 						// pause the score
-						score.pause; 
+						//score.pause; 
 					})
 				);
 			};
 			
 			chains;
-		}).flatten(1);
+		}).flatten(1) ++ [
+					UMarker( z + (30 / waitPoints.size) - 0.1, 2, "marker", { |marker, score| 
+						// pause the score
+						//score.pause; 
+					})
+				]
 	).name_( "shesme gedicht" );
 	evt.score.gui;
 };
