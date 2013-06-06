@@ -5,7 +5,7 @@ x.stop;
 
 ~shesme.gedicht.start;
 
-(
+(  // 1a: climbing / reset
 ~shesme.mumbling.applyPreset( \low );
 ~shesme.coupler.applyPreset( \climbing );
 ~shesme.notes.fade = 0;
@@ -19,13 +19,9 @@ x.stop;
 
 ~shesme.words.end;
 
-( // 1: climbing
-//~shesme.mumbling.applyPreset( \low );
-//~shesme.coupler.applyPreset( \climbing );
-//~shesme.notes.fade = 0;
-//~shesme.mumbling.start;
-//~shesme.coupler.start;
+( // 1b: 5s silence and then
 ~shesme.words.end;
+~shesme.notes.amp = 0.06;
 x = {
 	~shesme.notes.selection = (86/92).dup;
 	~shesme.notes.start;
@@ -54,6 +50,7 @@ x = {
 )
 
 ( // 3b: talking / words
+~shesme.notes.amp = 0.05;
 ~shesme.notes.selection = [0,0.4];
 ~shesme.notes.start;
 ~shesme.words.applyPreset( \all );
@@ -81,39 +78,7 @@ x = {
 ~shesme.mumbling.applyPreset( \rhythm );
 )
 
-/*
-( // 5a: rhythm dance (first) / drop hand
-~shesme.coupler.end;
-~shesme.mumbling.applyPreset( \rhythm );
-~shesme.mumbling.amp = 0.8;
-~shesme.broken.end;
-~shesme.mumbling.start;
-// -- nano buttons 4 --
-)
-*/
-
-/*
-// nano buttons 4
-
-( // 5b: walking (first) 
-~shesme.coupler.end;
-~shesme.broken.start;
-~shesme.mumbling.end;
-)
-
-( // 5c: rhythm dance (second)
-~shesme.coupler.end;
-~shesme.mumbling.applyPreset( \rhythm );
-~shesme.broken.end;
-~shesme.mumbling.start;
-)
-
-( // 5d: walking (second)
-~shesme.coupler.end;
-~shesme.broken.start;
-~shesme.mumbling.end;
-)
-*/
+// nano buttons 4 mumbling/broken
 
 ( // 5e: rhythm walking fast switch / dance
 ~shesme.coupler.applyPreset( \rhythm );
@@ -122,24 +87,7 @@ x = {
 ~shesme.sfr.pan = [ 0, 0 ];
 )
 
-/*
-( // 5f: touch painting
-~shesme.sfr.amp = 0.1;
-if( ~shesme.sfr.active.not ) {
-	~shesme.sfr.start;
-};
-~shesme.mumbling.amp = 0;
-~shesme.broken.amp = 0;
-)
-
-( // 5g: release painting
-~shesme.sfr.duck = 1;
-~shesme.sfr.end;
-~shesme.sfr.duck = 0;
-~shesme.mumbling.amp = 0.8;
-~shesme.broken.amp = 0.2;
-)
-*/
+// nano buttons 9 touch painting
 
 ( // 6a: walking next step
 ~shesme.coupler.end;
