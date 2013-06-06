@@ -13,6 +13,11 @@
 ~shesme.verb.end = { |evt| q.verb.end; evt.active = false; };
 ~shesme.verb.active = { q.verb.active.booleanValue };
 
+
+~shesme.verb.points = WFSPointGroup([ Point(-3.9423828125, -2.330859375), Point(-3.0865234375, 2.93359375), Point(-0.3, 5.0), Point(2.3982421875, 3.8634765625), Point(4.3759765625, 1.6984375), Point(5.6541015625, -1.7263671875), Point(-5.1078125, -2.242578125), Point(-4.044921875, 4.115234375), Point(3.0185546875, 4.16953125), Point(6.608203125, -2.238671875) ]);
+
+
+/*
 (
 ~shesme.verb.points = WFSPointGroup([ 
 
@@ -32,6 +37,7 @@
 	
 ] / 10);
 );
+*/
 
 /*
 (
@@ -134,7 +140,7 @@ SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay 
 	);
 	dry = dry * input * 4;
 	//dry = BHiCut.ar( dry, dryhicut, 1 );
-	dry = BHiShelf.ar( dry, dryhicut, 1, -16 );
+	dry = BHiShelf.ar( dry, dryhicut, 1, -6);
 	dry = DelayN.ar(dry, 0.25, preDelay );
 	input = input + (input.sum * leak ) * env * amp ;
 	input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
