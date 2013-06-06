@@ -61,6 +61,9 @@ SynthDef( "shesme_mumbling", { |buffers = #[0,0,0,0,0], speed = 3, spvar = 1, am
 		*/
 		//speed = speed.varlag(1);
 		
+		duck = Select.kr( Line.kr(0,1,0.1).round(1), [ duck, Latch.kr( duck, Impulse.kr(10) ) ] );
+		filter = Select.kr( Line.kr(0,1,0.1).round(1), [ filter, Latch.kr( filter, Impulse.kr(5) ) ] );
+		
 		amp = amp * duck.linlin(0,1,1,-0.1,\none).lag(0.1,4).max(0);
 			
 		sig = buffers.collect({ |buf|
