@@ -16,7 +16,7 @@ SynthDef( "shesme_speakerTest", { |out = 0, amp = 0.1, sustain = 1|
 		\dur, 0.25,
 		\legato, 0.5,
 		\amp, 0.1,
-		\out, Pseq( (..9), inf )
+		\out, Pseq( (..5), inf )
 	).play;
 };
 
