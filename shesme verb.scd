@@ -108,13 +108,14 @@ q.verb.out = 6;
 q.verb.dry = 0.4;
 q.verb.pan = 1;
 q.verb.quad = 1;
+q.verb.extra = 0;
 
 q.verb.offset = 22; // eucon slider
 
 (
 SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
 		fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1, quad = 1,
-		hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05|
+		hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05, extra = 0|
 	var bufs = \bufs.ir( 0!q.verb.n );
 	var input, sig, env, ni = 6;
 	env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 2 ).kr(2, gate );
@@ -122,6 +123,9 @@ SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay 
 	//CheckBadValues.ar( input );
 	//input = input + WhiteNoise.ar(1.0e-9);
 	input = RemoveBadValues.ar(input);
+	extra = extra * input;
+	extra = Splay.ar( extra );
+	extra = DelayN.ar(extra, 0.25, preDelay + 0.02 );
 	input = if( quad,
 		input.collect({ |sig, i|
 			var xx;
@@ -140,7 +144,7 @@ SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay 
 	);
 	dry = dry * input * 4;
 	//dry = BHiCut.ar( dry, dryhicut, 1 );
-	dry = BHiShelf.ar( dry, dryhicut, 1, -6);
+	//dry = BHiShelf.ar( dry, dryhicut, 1, -6);
 	dry = DelayN.ar(dry, 0.25, preDelay );
 	input = input + (input.sum * leak ) * env * amp ;
 	input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
@@ -149,7 +153,7 @@ SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay 
 	sig = bufs.collect({ |sp, i| 
 		PartConv.ar(input[i], fftsize, sp, 0.5); 
 	});
-	Out.ar( out, ((sig * 1) + (dry * env)) * 0.5 );
+	Out.ar( out, (((sig * 1) + (dry * env)) * 0.5) ++ extra );
 }).load(s);
 );
 
@@ -204,7 +208,8 @@ q.verb.start = { |evt, endFirst = true|  // doesn't check if already started !!
  		 		\private, evt.private.binaryValue,
  		 		\quad, evt.quad ? 1,
  		 		\out, evt.out ? 0,
- 		 		\dry, evt.dry ? 0
+ 		 		\dry, evt.dry ? 0,
+ 		 		\extra, evt.extra ? 0,
  			 ], addAction: \addAfter );
 	};
 
@@ -219,7 +224,7 @@ q.verb.cmdPeriod = { |evt| if( evt.active == 1 ) { { evt.start( false ) }.defer(
 CmdPeriod.add( q.verb );
 
 // window and views
-q.verb.w = Window( "verb", Rect(146, 365, 113, 124)).front;
+q.verb.w = Window( "verb", Rect(608, 8, 113, 144)).front;
 q.verb.w.addFlowLayout;
 q.verb.views = ();
 
@@ -246,6 +251,12 @@ q.verb.ctrl = SimpleController( q.verb )
 		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
 			q.verb.views[ \quad ].value = q.verb.	quad;
 			q.verb.sn.set( \quad, q.verb.quad );
+		};
+	})
+	.put( \extra, {
+		if( q.verb.w.notNil && { q.verb.w.isClosed.not } ) {
+			q.verb.views[ \extra ].value = q.verb.extra;
+			q.verb.sn.set( \extra, q.verb.extra );
 		};
 	})
 	.put( \preDelay, {
@@ -300,7 +311,14 @@ q.verb.views[ \quad ] = SmoothSlider(  q.verb.w, 94@16,  ).value_( q.verb.quad ?
 		q.verb.quad = sl.value;
 		q.verb.sn.set( \quad, q.verb.quad ); 
 	});
-			
+	
+q.verb.views[ \extra ] = SmoothSlider(  q.verb.w, 94@16,  ).value_( q.verb.extra ? 0 )
+	.string_( " extra " )
+	.action_({ |sl| 
+		q.verb.extra = sl.value;
+		q.verb.sn.set( \extra, q.verb.extra ); 
+	});
+				
 StaticText( q.verb.w, 50@16 ).string_( "predelay" ).align_( \right ).font_( q.verb.font );
 q.verb.views[ \preDelay ] = SmoothNumberBox( q.verb.w, 40@16 ).value_( q.verb.preDelay ? 0)
 	.clipLo_( 0 ).clipHi_(0.25).step_(0.01).font_( q.verb.font )
