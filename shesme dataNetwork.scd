@@ -40,31 +40,31 @@
 		evt.n.addHook( 1, {
 			evt.n.nodes[1].slots[0].action = { |data|
 				if( evt.vals[ \which ] == 0 ) {
-					evt.vals[ \bend1 ] = data.linlin(evt.bend1range[0], evt.bend1range[1], 0,1,\none);
+					//evt.vals[ \bend1 ] = data.linlin(evt.bend1range[0], evt.bend1range[1], 0,1,\none);
 					evt.vals[ \bend2 ] = data.linlin(evt.bend1range[0], evt.bend1range[1], 0,1,\none);
 				};
 			};
 			evt.n.nodes[1].slots[1].action = { |data|
 				if( evt.vals[ \which ] == 0 ) {
-					evt.vals[ \press1 ] = (1-data).linlin(evt.press1range[0], evt.press1range[1], 0,1,\none);
+					//evt.vals[ \press1 ] = (1-data).linlin(evt.press1range[0], evt.press1range[1], 0,1,\none);
 					evt.vals[ \press2 ] = (1-data).linlin(evt.press1range[0], evt.press1range[1], 0,1,\none);
 				};
 			};
 			evt.n.nodes[1].slots[4].action = { |data|
 				if( evt.vals[ \which ] == 0 ) {
-					evt.vals[ \x1 ]  = data.linlin(0.46,0.54,0,1,\none);
+					//evt.vals[ \x1 ]  = data.linlin(0.46,0.54,0,1,\none);
 					evt.vals[ \x2 ]  = data.linlin(0.46,0.54,0,1,\none);
 				};
 			};
 			evt.n.nodes[1].slots[5].action = { |data|
 				if( evt.vals[ \which ] == 0 ) {
-					evt.vals[ \y1 ] = data.linlin(0.46,0.54,0,1,\none);
+					//evt.vals[ \y1 ] = data.linlin(0.46,0.54,0,1,\none);
 					evt.vals[ \y2 ] = data.linlin(0.46,0.54,0,1,\none);
 				};
 			};
 			evt.n.nodes[1].slots[6].action = { |data|
 				if( evt.vals[ \which ] == 0 ) {
-					evt.vals[ \z1 ]  = data.linlin(0.46,0.54,0,1,\none);
+					//evt.vals[ \z1 ]  = data.linlin(0.46,0.54,0,1,\none);
 					evt.vals[ \z2 ]  = data.linlin(0.46,0.54,0,1,\none);
 				};
 			};
@@ -72,32 +72,32 @@
 		evt.n.addHook( 2, {
 			evt.n.nodes[2].slots[0].action = { |data|
 				if( evt.vals[ \which ] == 1 ) {
-					evt.vals[ \bend1 ] = data.linlin(evt.bend2range[0], evt.bend2range[1], 0,1,\none);
+					//evt.vals[ \bend1 ] = data.linlin(evt.bend2range[0], evt.bend2range[1], 0,1,\none);
 					evt.vals[ \bend2 ] = data.linlin(evt.bend2range[0], evt.bend2range[1], 0,1,\none);
 				};
 			};
 			evt.n.nodes[2].slots[1].action = { |data|
 				if( evt.vals[ \which ] == 1 ) {
-					evt.vals[ \press1 ] = (1-data).linlin(evt.press2range[0], evt.press2range[1], 0,1,\none);
+					//evt.vals[ \press1 ] = (1-data).linlin(evt.press2range[0], evt.press2range[1], 0,1,\none);
 					evt.vals[ \press2 ] = (1-data).linlin(evt.press2range[0], evt.press2range[1], 0,1,\none);
 				};
 			};
 
 			evt.n.nodes[2].slots[4].action = { |data|
 				if( evt.vals[ \which ] == 1 ) {
-					evt.vals[ \x1 ]  = data.linlin(0.46,0.54,0,1,\none);
+					//evt.vals[ \x1 ]  = data.linlin(0.46,0.54,0,1,\none);
 					evt.vals[ \x2 ]  = data.linlin(0.46,0.54,0,1,\none);
 				};
 			};
 			evt.n.nodes[2].slots[5].action = { |data|
 				if( evt.vals[ \which ] == 1 ) {
-					evt.vals[ \y1 ] = data.linlin(0.46,0.54,0,1,\none);
+					//evt.vals[ \y1 ] = data.linlin(0.46,0.54,0,1,\none);
 					evt.vals[ \y2 ] = data.linlin(0.46,0.54,0,1,\none);
 				};
 			};
 			evt.n.nodes[2].slots[6].action = { |data|
 				if( evt.vals[ \which ] == 1 ) {
-					evt.vals[ \z1 ]  = data.linlin(0.46,0.54,0,1,\none);
+					//evt.vals[ \z1 ]  = data.linlin(0.46,0.54,0,1,\none);
 					evt.vals[ \z2 ]  = data.linlin(0.46,0.54,0,1,\none);
 				};
 			};
@@ -105,19 +105,21 @@
 		evt.dtask.stop;
 		evt.dtask = Task({
 			var oldvals, vals, dvals;
-			oldvals = #[ x1, y1, z1, x2, y2, z2 ].collect({ |item|
+			oldvals = #[ x2, y2, z2 ].collect({ |item|
 				evt.vals[ item ] ? 0.5;
 			});
 			loop {
 				0.1.wait;
-				vals =  #[ x1, y1, z1, x2, y2, z2 ].collect({ |item|
+				vals =  #[ x2, y2, z2 ].collect({ |item|
 					evt.vals[ item ] ? 0.5;
 				});
 				dvals = oldvals - vals;
 				dvals = dvals.abs;
+				/*
 				evt.vals[ \d1 ] = dvals[..2].mean
 					.blend( evt.vals[ \d1 ] ? 0, evt.vals.ddecay ? 0.25 );
-				evt.vals[ \d2 ] = dvals[3..].mean
+				*/
+				evt.vals[ \d2 ] = dvals.mean
 					.blend( evt.vals[ \d2 ] ? 0, evt.vals.ddecay ? 0.25 );
 				oldvals = vals;
 			};
