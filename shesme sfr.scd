@@ -54,8 +54,10 @@
 	#key, value, spec = array;
 	~shesme.sfr[ key ] = value;
 	~shesme.sfr[ key.asSetter ] = { |evt, val|
+		var lastVal;
+		lastVal = evt[ key ];
 		evt[ key ] = val;
-		evt.synths.do(_.set( key, val) );
+		if( val != lastVal ) { evt.synths.do(_.set( key, val) ); };
 	};
 	~shesme.sfr.specs[ key.asGetter ] = spec;
 });

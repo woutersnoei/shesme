@@ -41,8 +41,10 @@
 	#key, value, spec = array;
 	~shesme.mumbling[ key ] = value;
 	~shesme.mumbling[ key.asSetter ] = { |evt, val|
+		var lastVal;
+		lastVal = evt[ key ];
 		evt[ key ] = val;
-		evt.sn.set( key, val);
+		if( lastVal != val ) { evt.sn.set( key, val); };
 	};
 	~shesme.mumbling.specs[ key.asGetter ] = spec;
 });

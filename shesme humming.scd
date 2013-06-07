@@ -16,8 +16,10 @@
 	#key, value, spec = array;
 	~shesme.humming[ key ] = value;
 	~shesme.humming[ key.asSetter ] = { |evt, val|
+		var lastVal;
+		lastVal = evt[ key ];
 		evt[ key ] = val;
-		evt.sn.set( key, val);
+		if( val != lastVal ) { evt.sn.set( key, val); };
 	};
 	~shesme.humming.specs[ key.asGetter ] = spec;
 });
