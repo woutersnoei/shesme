@@ -1,6 +1,6 @@
 ( // all off
 [ 'baarmoeder', 'broken', 'chords', 'gedicht', 'humming', 'ikzoekjeniet', 'laughing', 'mumbling', 'notes', 'opnieuw', 'pattern', 'sfr', 'tttt', 'tzu', 'quotes', 'wapentuig', 'words', 'coupler' ].do({ |item| ~shesme[ item ].end });
-x.stop;
+x.do(_.stop); x = nil;
 )
 
 ~shesme.gedicht.start;
@@ -22,7 +22,7 @@ x.stop;
 ( // 1b: 5s silence and then
 ~shesme.words.end;
 ~shesme.notes.amp = 0.06;
-x = {
+x = x.add({
 	~shesme.notes.selection = (86/92).dup;
 	~shesme.notes.start;
 	0.1.wait;
@@ -31,7 +31,7 @@ x = {
 	(~shesme.notes.currentNoteDur + 7).wait;
 	~shesme.notes.selection = [0.25,1];
 	~shesme.notes.start;
-}.fork;
+}.fork );
 )
 
 
@@ -104,7 +104,7 @@ x = {
 ~shesme.mumbling.start;
 ~shesme.wapentuig.end;
 ~shesme.sfr.end;
-x = {
+x = x.add( {
 	var start, end, time = 5, res = 0.1, n;
 	start = 2;
 	end = 0.38;
@@ -141,6 +141,7 @@ x = {
 	});
 
 }.fork;
+);
 )
 
 
@@ -158,12 +159,7 @@ x = {
 ~shesme.coupler.start;
 )
 
-// 7c: touch human
-~shesme.sfr.applyPreset( \sjj );
-
-// 7d: touch painting
-~shesme.sfr.applyPreset( \rollig );
-
+// nano lower knob 9 switch preset
 
 (
 // 8: start pattern
@@ -180,7 +176,7 @@ x = {
 
 (
 // 8b: pattern end
-{
+x = x.add({
 	~shesme.coupler.end;
 	~shesme.pattern.scream = 0;
 	20.do({ |i|
@@ -191,6 +187,7 @@ x = {
 	});
 	~shesme.pattern.end
 }.fork;
+);
 )
 
 
@@ -207,7 +204,7 @@ x = {
 ~shesme.sfr.amp = 0.5;
 ~shesme.sfr.start;
 ~shesme.sfr.filter = 0.7;
-{
+x = x.add({
 	var filterEnv, verbEnv, pbrateEnv;
 	verbEnv = Env([ 0, 0.66, 1 ], [2,10] );
 	filterEnv = Env([0,0,1], [5, 7] );
@@ -221,6 +218,7 @@ x = {
 	});
 }.fork;
 )
+)
 
 ( // 9c: mumbling start
 ~shesme.mumbling.end;
@@ -231,17 +229,18 @@ x = {
 
 ( // 9d: filter down
 ~shesme.laughing.brassage = 0.75;
-x = {
+x = x.add( {
 	3.wait;
 	
 	100.do({ |i|
-		~shesme.laughing.amp = i.linlin(0,20,0.75,0.33);
+		~shesme.laughing.amp = i.linlin(0,20,0.75,0.7);
 		~shesme.laughing.filter = i.linlin(0,99,1,-1);
 		~shesme.laughing.pbrate = i.linexp(0,99,4,0.33);
 		0.1.wait
 	});
 
-}.fork;
+}.fork
+);
 )
 
 ( // 9d: dripping to back
@@ -259,30 +258,37 @@ x = {
 ~shesme.laughing.end;
 )
 
-//~shesme.sfr.end;
-
 ( // 10c: baarmoeder start
 ~shesme.baarmoeder.amp = 0;
 ~shesme.baarmoeder.start;
-x = { 
+x = x.add( { 
 	var dur = 60, amp = 0.05;
 	var spec = \amp.asSpec;
+	var inc, newAmp = 0;
 	amp = spec.unmap( amp );
+	inc = amp / (dur*10);
+	~shesme.baarmoeder.amp = 0;
+	while { newAmp < amp } {
+		~shesme.baarmoeder.amp = spec.map( newAmp = spec.unmap( ~shesme.baarmoeder.amp ) + inc );
+		0.1.wait;
+	};
+	/*
 	(dur * 10).do({ |i|
 		~shesme.baarmoeder.amp = spec.map( i.linlin(0, (dur*10)-1, 0, amp ) );
 		0.1.wait;
 	});
-}.fork;
+	*/
+}.fork
+);
 )
 
 // 10d: quotes only "in mijn land"
 ~shesme.quotes.selection = 4;
 
-
 ( // 11: end 1
 ~shesme.mumbling.end;
 ~shesme.baarmoeder.end;
-x = {
+x = x.add({
 	var time;
 	time = ~shesme.baarmoeder.currentNoteDur - 
 		(Process.elapsedTime - ~shesme.baarmoeder.currentNoteStartedAt);
@@ -295,8 +301,9 @@ x = {
 	~shesme.baarmoeder.start;
 	
 }.fork;
+);
 )
 
 ~shesme.baarmoeder.end;
 
-x.stop;
+x.do(_.stop); x = nil;

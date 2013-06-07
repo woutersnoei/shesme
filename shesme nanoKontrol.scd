@@ -113,7 +113,7 @@ NanoKONTROL.buttons[0][22].action = { |bt|
 	if( bt.value > 0.5 ) { 
 		 // all off
 		[ 'baarmoeder', 'broken', 'chords', 'gedicht', 'humming', 'ikzoekjeniet', 'laughing', 'mumbling', 'notes', 'opnieuw', 'pattern', 'sfr', 'tttt', 'tzu', 'quotes', 'wapentuig', 'words', 'coupler' ].do({ |item| ~shesme[ item ].end });
-		x.stop;
+		x.do(_.stop); x = nil;
 		};
 };
 
