@@ -21,7 +21,7 @@ x.do(_.stop); x = nil;
 
 ( // 1b: 5s silence and then
 ~shesme.words.end;
-~shesme.notes.amp = 0.06;
+~shesme.notes.amp = 0.1;
 x = x.add({
 	~shesme.notes.selection = (86/92).dup;
 	~shesme.notes.start;
