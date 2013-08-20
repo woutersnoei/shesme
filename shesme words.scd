@@ -75,6 +75,7 @@
 ~shesme.words.which = \all;
 ~shesme.words.index = (..15); // == all
 ~shesme.words.trigger = 1;
+~shesme.words.waitTime = 7.5;
 
 ~shesme.words.trigger_ = { |evt, value = 1|
 	if( evt.active == true ) {
@@ -89,6 +90,7 @@
 	[ "all", "love / my love" ] ++ ~shesme.words.texts
 );
 ~shesme.words.specs.trigger = TriggerSpec( "start" );
+~shesme.words.specs.waitTime = [ 5, 30, \lin].asSpec;
 
 ~shesme.words.playSingle = { |evt, index, which|
 	var chain;
@@ -107,7 +109,7 @@
 	evt.task = Task({
 		loop {
 			evt.playSingle( evt.index, evt.which );
-			(5 rrand: 10).wait;
+			((evt.waitTime * 0.75) rrand: (evt.waitTime / 0.75)).wait;
 		};
 	}).start;
 	evt.active = true;

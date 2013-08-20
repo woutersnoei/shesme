@@ -13,6 +13,7 @@
 ~shesme.tttt.transpose = 0;
 ~shesme.tttt.fadeOut = 0;
 ~shesme.tttt.speed = 5;
+~shesme.tttt.speedVari = 3;
 
 ~shesme.tttt.specs = OEM();
 
@@ -21,6 +22,7 @@
 ~shesme.tttt.specs.speed = [1,50,\exp,0,5].asSpec;
 ~shesme.tttt.specs.transpose = [-12,12,\lin,0,0].asSpec;
 ~shesme.tttt.specs.fadeOut = [0,1,\lin].asSpec;
+~shesme.tttt.specs.speedVari = [3,10].asSpec;
 
 (
 SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate = 1, pan = 0|
@@ -43,7 +45,9 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 		var sortedBuffers;
 		stream = Pbrown( 0, (evt.buffers.size-1).asInt, 10, inf ).asStream;
 		sortedBuffers = [ evt.freqs, evt.buffers ].flop.sort({ |a,b| a[0] <= b[0] }).flop[1];
-		times = (Pbrown(0.0,1.0,0.1,inf).linlin(0,1,1/3,3) * Pwhite(0.9,1.1,inf)).asStream;
+		times = (Pbrown(0.0,1.0,0.15,inf).linlin(0,1, 
+			Pfunc({ 1/ evt.speedVari; }), Pfunc({ evt.speedVari; })
+		) * Pwhite(0.9,1.1,inf)).asStream;
 		pan = Pwhite(-1.0,1.0,inf).asStream;
 		//stream = Pseq( [ Pseries(0, 1, evt.buffers.size ) ], inf ).asStream;
 		//times = Pwrand( [ Pseq([0.05,0.05,0.05,0.05],1), 0.1 ], [0.1, 0.9 ], inf ).asStream;
