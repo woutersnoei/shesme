@@ -21,8 +21,12 @@
 ~shesme.dataNetwork.vals.ddecay = 0.25;
 
 ~shesme.dataNetwork.startPython = { 
+	/*
 	"cd '%/ssdn_python-master/pydon'; python metapydonhive.py"
 			.format( ~shesme.path.dirname ).runInTerminal;
+	*/
+	"cd '%/ssdn_python-master-2/pydon'; scripts/pydongui.py"
+		.format( ~shesme.path.dirname ).runInTerminal;
 };
 
 ~shesme.dataNetwork.startNetwork = { |evt|
