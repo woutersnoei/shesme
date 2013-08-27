@@ -88,6 +88,8 @@ SynthDef( "shesme_sfr", { |bufnum = 0, amp = 0.1, transpose = 0, filter = 0, con
 	var sig, fft1, fft2;
 	var sig2, trigger;
 	
+	convolve = convolve.lag(1);
+	
 	duck = Select.kr( Line.kr(0,1,0.1).round(1), [ duck, Latch.kr( duck, Impulse.kr(10) ) ] );
 	
 	sig = GrainBuf.ar( 6, 
