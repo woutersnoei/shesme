@@ -48,7 +48,7 @@ SynthDef( "shesme_tttt", { |bufnum = 0, amp = 0.1, fadeOut = 0, offset = 0, rate
 		times = (Pbrown(0.0,1.0,0.15,inf).linlin(0,1, 
 			Pfunc({ 1/ evt.speedVari; }), Pfunc({ evt.speedVari; })
 		) * Pwhite(0.9,1.1,inf)).asStream;
-		pan = Pwhite(-1.0,1.0,inf).asStream;
+		pan = PintL( Pwhite(-1.0,1.0,inf), 0.05 ).asStream;
 		//stream = Pseq( [ Pseries(0, 1, evt.buffers.size ) ], inf ).asStream;
 		//times = Pwrand( [ Pseq([0.05,0.05,0.05,0.05],1), 0.1 ], [0.1, 0.9 ], inf ).asStream;
 		// stream = PintL( Pwhite(0, evt.buffers.size.asInt, inf ), 0.05 ).round(1).asStream;

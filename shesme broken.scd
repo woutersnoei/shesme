@@ -40,7 +40,7 @@ SynthDef( "shesme_broken", { |bufnum = 0, amp = 0.1, pbrate = #[0.8,1.2], shiftv
 	sig = PitchShift.ar(sig, 0.005, 
 		LFDNoise3.kr(0.3).range(shiftvar.neg, shiftvar).midiratio, 
 		pvar, pvar * 0.02);
-	sig = RoundPan.ar( 6, sig, LFDNoise3.kr(0.1) * 2 ) * amp * 0.25;
+	sig = RoundPan.ar( 6, sig, LFDNoise3.kr(0.05) * 2 ) * amp * 0.25;
 	Out.ar( 0, sig * Env.cutoff.kr(2,gate) );
 }).load(s);
 );
