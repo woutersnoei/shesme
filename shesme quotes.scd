@@ -10,8 +10,8 @@
 
 ~shesme.quotes.specs = OEM();
 
-[ \amp, 0.1, \amp.asSpec, \filter, 0, [-1,1,\lin,0,0].asSpec, \pan, [-1,1], [-1,1].asSpec.asRangeSpec, 
-	\selection, 0, ListSpec((..6), 0, [ 
+[ \amp, 0.1, \amp.asSpec, \filter, 0, [-1,1,\lin,0,0].asSpec, "pan", [-1,1], [-1,1].asSpec.asRangeSpec, 
+	"selection", 0, ListSpec((..6), 0, [ 
 		"all",
 		"100_procent_man_vrouw", 
 		"als_ik_dans", 
@@ -19,16 +19,20 @@
 		 "in_mijn_land", 
 		 "meiden_zijn_krengen_kort", 
 		 "onvoorwaardelijke_liefde" 
-		] )
+		] ),
+	"waitTime", 4, [4,40].asSpec,
+	"waitForActive", false, BoolSpec(false)
 ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
-	~shesme.quotes[ key ] = value;
-	~shesme.quotes[ key.asSetter ] = { |evt, val|
-		evt[ key ] = val;
-		evt.synths.do(_.set( key, val) );
+	~shesme.quotes[ key.asSymbol ] = value;
+	if( key.class == Symbol ) {
+		~shesme.quotes[ key.asSetter ] = { |evt, val|
+			evt[ key ] = val;
+			evt.synths.do(_.set( key, val) );
+		};
 	};
-	~shesme.quotes.specs[ key.asGetter ] = spec;
+	~shesme.quotes.specs[ key.asSymbol.asGetter ] = spec;
 });
 
 ~shesme.quotes.loadBuffers = { |evt, action|
@@ -91,15 +95,58 @@ SynthDef( "shesme_quote", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0
 			);
 			evt.currentQuoteDur = evt.buffers[index].duration;
 			evt.currentquotestartedAt = Process.elapsedTime;
-			(evt.currentQuoteDur + (2.0 rrand: 6.0)).wait;
+			(evt.currentQuoteDur + ((evt.waitTime * 0.5) rrand: (evt.waitTime * 1.5))).wait;
+			if( evt.waitForActive == true ) {
+				while { [ \broken, \chords, \laughing, \sfr, \tttt, \notes ].any({ |item|
+					~shesme[ item ].active == true
+					}).not or: {
+						[ \mumbling, \baarmoeder ].any({ |item|
+							~shesme[ item ].active == true
+						});
+					}
+				} {
+					(3 rrand: 8).wait;
+				};
+			};
 		};
 	}.fork;
 	evt.active = true;
 };
 
-~shesme.quotes.end = { |evt|
+
+~shesme.quotes.startAll = { |evt|
+	evt.end;
+	evt.task = {
+		//var index = 0;
+		6.do { |index|
+			/*
+			if( evt.selection != 0 ) {
+				index = evt.selection - 1;
+			} {
+				index = (index + 1).wrap( 0, evt.buffers.size-1 );
+			};
+			*/
+			evt.synths = evt.synths.add( 
+				Synth( "shesme_quote", [ 
+					\bufnum, evt.buffers[index], 
+					\pan, evt.whichwhere[index].linlin( 0, 6, evt.pan[0], evt.pan[1] ),
+					\amp, evt.amp,
+					\filter, evt.filter ? 0,
+				] ).freeAction_({ |synth|
+					 evt.synths.remove( synth );
+				});
+			);
+			evt.currentQuoteDur = evt.buffers[index].duration;
+			evt.currentquotestartedAt = Process.elapsedTime;
+			//(evt.currentQuoteDur + (2.0 rrand: 6.0)).wait;
+		};
+	}.fork;
+	//evt.active = true;
+};
+
+~shesme.quotes.end = { |evt, endNow = false|
 	evt.task.stop;
-	//evt.synths.do(_.release);
+	if( endNow == true ) { evt.synths.do(_.release); };
 	evt.active = false;
 };
 
