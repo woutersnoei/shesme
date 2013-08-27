@@ -3,6 +3,8 @@
 
 ~shesme.path = thisProcess.nowExecutingPath.dirname;
 
+~shesme.doAfterLoad = nil;
+
 ~shesme.names = [ // files that require buffer loading
 	\baarmoeder,
 	\broken,
@@ -50,7 +52,7 @@
 	}.fork;
 };
 
-~shesme.loadBuffers( { "\n~shesme loading buffers done".postln; } );
+~shesme.loadBuffers( { "\n~shesme loading buffers done".postln; { ~shesme.doAfterLoad }.defer; } );
 
 MasterEQ(6);
 
