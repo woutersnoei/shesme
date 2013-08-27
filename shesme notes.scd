@@ -104,8 +104,12 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.
 
 ~shesme.notes.end = { |evt|
 	evt.task.stop;
-	//evt.synths.do(_.release);
 	evt.active = false;
+};
+
+~shesme.notes.endAll = { |evt|
+	evt.end;
+	evt.synths.do(_.release);
 };
 
 (

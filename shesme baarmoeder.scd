@@ -91,10 +91,10 @@
 	evt.active = true;
 };
 
-~shesme.baarmoeder.end = { |evt|
+~shesme.baarmoeder.end = { |evt, endNow = false|
 	evt.task.stop;
 	evt.task = nil;
-	//evt.synths.do(_.release);
+	if( endNow == true ) { evt.synths.do(_.release); };
 };
 )
 
