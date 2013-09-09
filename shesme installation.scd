@@ -4,6 +4,8 @@
 
 ~shesme.installation = ~shesme.installation ? EM();
 
+~shesme.names = ~shesme.names ++ [ \installation ];
+
 /*
 ~shesme.installation.end;
 ~shesme.installation.endSound;
