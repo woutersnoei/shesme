@@ -24,6 +24,7 @@
 	~shesme.words.waitTime = 30;
 	~shesme.words.amp = 0.15;
 	~shesme.quotes.applyPreset( \long_waitforactive );
+	~shesme.quotes.amp = 0.3;
 	~shesme.notes.amp = 0.05;
 	~shesme.chords.amp = 0.05;
 	~shesme.laughing.amp = 0.4;
@@ -41,13 +42,21 @@
 	evt.startBaarMumbling;
 	~shesme.quotes.start;
 	~shesme.words.start;
+	evt.active = true;
 };
 
 ~shesme.installation.end = { |evt|
 	evt.endTasks;
 	evt.endBaarMumbling;
 	~shesme.quotes.end( true );
-	~shesme.words.end;
+	[ 
+		'baarmoeder', 'broken', 'chords', 'gedicht', 
+		'humming', 'laughing', 'mumbling', 'notes', 
+		'pattern', 'sfr', 'tttt', 'wapentuig', 'words' 
+	].do({ |item|
+		~shesme[ item ].end( );
+	});
+	evt.active = false;
 };
 
 ~shesme.installation.startTasks = { |evt|
