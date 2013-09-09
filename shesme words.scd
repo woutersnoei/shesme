@@ -41,6 +41,11 @@
 			evt.texts[ evt.paths.atIndex(0).indices[i] ] = evt.paths.atIndex(0).texts[i];
 		};
 	});
+	evt.paths.atIndex(1).languages.do({ |item, i|
+		if( item == \en ) {
+			evt.texts[ evt.paths.atIndex(1).indices[i] ] = evt.paths.atIndex(1).texts[i];
+		};
+	});
 	
 	evt.texts = evt.texts.asArray;
 	evt.all = Order();
