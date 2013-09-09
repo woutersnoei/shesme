@@ -13,9 +13,13 @@
 ~shesme.verb.end = { |evt| q.verb.end; evt.active = false; };
 ~shesme.verb.active = { q.verb.active.booleanValue };
 
-
+/*
+// live setup
 ~shesme.verb.points = WFSPointGroup([ Point(-3.9423828125, -2.330859375), Point(-3.0865234375, 2.93359375), Point(-0.3, 5.0), Point(2.3982421875, 3.8634765625), Point(4.3759765625, 1.6984375), Point(5.6541015625, -1.7263671875), Point(-5.1078125, -2.242578125), Point(-4.044921875, 4.115234375), Point(3.0185546875, 4.16953125), Point(6.608203125, -2.238671875) ]);
+*/
 
+// installation zaandam
+~shesme.verb.points = WFSPointGroup([ Point(-3.0, -4.0), Point(-3.0), Point(-3.0, 4.0), Point(3.0, 4.0), Point(3.0), Point(3.0, -4.0), Point(-4.0), Point(-4.0), Point(4.0), Point(4.0) ]);
 
 /*
 (
@@ -79,7 +83,8 @@ WFSSpeakerConf.default = WFSSpeakerConf(); // hide speakerconf
 		});
 	});
 	
-	evt.panValuesQuad = quad;
+	//evt.panValuesQuad = quad;
+	evt.panValuesQuad = [0,0.5,1,2,2.5,3]; // override for installation
 	evt.panValuesStereo = [-1,-0.5,0,0.33,0.66,1]; // bypass stereo - doesn't sound right
 };
 

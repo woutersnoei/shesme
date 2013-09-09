@@ -19,8 +19,8 @@
 	~shesme.makeWindow;
 	~shesme.speakerCorrect.start;
 	q.verb.amp = 0.5;
-	q.verb.dry = 0;
-	q.verb.quad = 0;
+	q.verb.dry = 0.2;
+	q.verb.quad = 1;
 	q.verb.extra = 0;
 	~shesme.verb.start;
 	~shesme.words.waitTime = 30;
