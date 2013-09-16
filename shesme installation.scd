@@ -18,8 +18,8 @@
 ~shesme.doAfterLoad = { |evt|
 	~shesme.makeWindow;
 	~shesme.speakerCorrect.start;
-	q.verb.amp = 0.5;
-	q.verb.dry = 0.2;
+	q.verb.amp = 0.25;
+	q.verb.dry = 0.1;
 	q.verb.quad = 1;
 	q.verb.extra = 0;
 	~shesme.verb.start;
