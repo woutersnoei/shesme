@@ -63,7 +63,7 @@
 			};
 		});
 	});
-	evt.specs.index = ListSpec( [(..15), [0,9]] ++ (..15), 0, 
+	evt.specs.index = ListSpec( [(..16), [0,9]] ++ (..16), 0, 
 			[ "all", "love / my love" ] ++ ~shesme.words.texts
 		);
 	"loaded paths for ~shesme.words".postln;
@@ -78,7 +78,7 @@
 
 ~shesme.words.amp = 0.1;
 ~shesme.words.which = \all;
-~shesme.words.index = (..15); // == all
+~shesme.words.index = (..16); // == all
 ~shesme.words.trigger = 1;
 ~shesme.words.waitTime = 7.5;
 
@@ -91,7 +91,7 @@
 
 ~shesme.words.specs.amp = \amp.asSpec;
 ~shesme.words.specs.which = ListSpec( [\all, \soft, \loud ] );
-~shesme.words.specs.index = ListSpec( [(..15), [0,9]] ++ (..15), 0, 
+~shesme.words.specs.index = ListSpec( [(..16), [0,9]] ++ (..16), 0, 
 	[ "all", "love / my love" ] ++ ~shesme.words.texts
 );
 ~shesme.words.specs.trigger = TriggerSpec( "start" );
@@ -101,7 +101,7 @@
 	var chain;
 	index = (index ? evt.index).asCollection.choose;
 	which = which ? evt.which;
-	if( index < 16 ) {
+	if( index < 17 ) {
 		chain = evt[ which ][index].choose.deepCopy;
 		chain.set( \bus, 6.rand );
 		chain.gain = evt.amp.ampdb;
