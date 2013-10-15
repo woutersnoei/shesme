@@ -18,20 +18,22 @@
 ~shesme.doAfterLoad = { |evt|
 	~shesme.makeWindow;
 	~shesme.speakerCorrect.start;
-	q.verb.amp = 0.25;
-	q.verb.dry = 0.1;
+	q.verb.amp = 0.3;
+	q.verb.dry = 0.3;
 	q.verb.quad = 1;
 	q.verb.extra = 0;
 	~shesme.verb.start;
-	~shesme.words.waitTime = 30;
-	~shesme.words.amp = 0.15;
+	~shesme.notes.applyPreset( \all_fast );
+	~shesme.words.amp = 0.3;
 	~shesme.quotes.applyPreset( \long_waitforactive );
 	~shesme.quotes.amp = 0.3;
-	~shesme.notes.amp = 0.05;
-	~shesme.chords.amp = 0.05;
-	~shesme.laughing.amp = 0.4;
-	~shesme.tttt.amp = 0.03;
-	~shesme.baarmoeder.amp = 0.05;
+	~shesme.notes.applyPreset( \fade );
+	~shesme.notes.amp = 0.1;
+	~shesme.chords.amp = 0.1;
+	~shesme.laughing.amp = 0.5;
+	~shesme.tttt.amp = 0.06;
+	~shesme.baarmoeder.amp = 0.1;
+	~shesme.sfr.amp = 0.2;
 	
 	~shesme.installation.start;
 	
@@ -65,7 +67,7 @@
 	evt.endTasks;
 	evt.laughing = { // laughing
 		var lastPreset = 2;	
-		var presets = [ \default, \chatter, \birdlike, \lowish ];
+		var presets = [ \default_fadein, \chatter, \birdlike, \lowish ];
 		loop {
 			if( 0.33.coin ) {
 				lastPreset = presets.size.xrand( lastPreset );
