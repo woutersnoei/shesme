@@ -96,7 +96,7 @@ SynthDef( "shesme_note", { |bufnum = 0, rate = 1, filter = 0, gain = 1, amp = 0.
 			);
 			evt.currentNoteDur = evt.buffers[index].duration / rate;
 			evt.currentNoteStartedAt = Process.elapsedTime;
-			(2.0 rrand: 19.0).wait;
+			(2.0 rrand: 16.0).wait;
 		};
 	}.fork;
 	evt.active = true;
