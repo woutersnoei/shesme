@@ -22,7 +22,8 @@
 	\filter, 0, [-1,1,\lin,0,0].asSpec, 
 	\verb, 0, [0,1].asSpec,
 	\brassage, 0, [0,1].asSpec,
-	\pbrate, 1, [0.25,4,\exp,0,1].asSpec 
+	\pbrate, 1, [0.25,4,\exp,0,1].asSpec,
+	\fadeIn, 0, [0,5].asSpec,
 ].clump(3).do({ |array|
 	var key, value, spec;
 	#key, value, spec = array;
@@ -36,7 +37,7 @@
 );
 
 (
-SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, verb = 0, amp = 0.1, pan = #[-2,2], gate = 1, filter = 0, brassage = 0|
+SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, verb = 0, amp = 0.1, pan = #[-2,2], gate = 1, filter = 0, brassage = 0, fadeIn = 0|
 	var sig, verbSig;
 	brassage = brassage.varlag( 4 );
 	pos = pos * BufFrames.kr(bufnum);
@@ -55,7 +56,7 @@ SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, verb = 0, amp
 		Dseq( [ 1-brassage, 1 + (brassage * 0.25) ], inf ) 
 	);
 	sig = RoundPan.ar( 6, sig, LFDNoise3.kr( verb.linlin(0,1,0.25,0.05) ).range(*pan));
-	Out.ar(0, sig * Env.cutoff(2).kr(2,gate) );	
+	Out.ar(0, sig * Env([0,1],[fadeIn],2).kr * Env.cutoff(2).kr(2,gate) );	
 }).load(s);
 );
 
@@ -65,7 +66,7 @@ SynthDef( "shesme_laughing", { |bufnum = 0, pos = 0.5, pbrate = 1, verb = 0, amp
 	evt.synths = evt.buffers.collect({ |buf|
 		2.collect({ 
 			Synth( "shesme_laughing", [ \bufnum, buf ] ++ 
-				evt.getPairs([\amp, \pos, \pan, \pbrate, \verb, \filter, \brassage]) );		});
+				evt.getPairs([\amp, \pos, \pan, \pbrate, \verb, \filter, \brassage, \fadeIn]) );		});
 	}).flatten(1);
 	evt.active = true;
 };
