@@ -1,5 +1,5 @@
 ( // all off
-[ 'baarmoeder', 'broken', 'chords', 'gedicht', 'humming', 'ikzoekjeniet', 'laughing', 'mumbling', 'notes', 'opnieuw', 'pattern', 'sfr', 'tttt', 'tzu', 'quotes', 'wapentuig', 'words', 'coupler' ].do({ |item| ~shesme[ item ].end });
+[ 'baarmoeder', 'broken', 'chords', 'gedicht', 'humming', 'laughing', 'mumbling', 'notes', 'pattern', 'sfr', 'tttt', 'quotes', 'wapentuig', 'words', 'coupler' ].do({ |item| ~shesme[ item ].end });
 x.do(_.stop); x = nil;
 )
 
