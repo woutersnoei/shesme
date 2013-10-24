@@ -5,6 +5,8 @@ x.do(_.stop); x = nil;
 
 ~shesme.gedicht.start;
 
+// nano slider 1 amp, slider 2 dry, knob 2 quad (open in begin)
+
 (  // 1a: climbing / reset
 ~shesme.mumbling.applyPreset( \low );
 ~shesme.coupler.applyPreset( \climbing );
@@ -159,10 +161,11 @@ x = x.add( {
 ~shesme.coupler.start;
 )
 
-// nano lower knob 9 switch preset
+// nano lower knob 9 switch preset / upper button touch painting
 
 (
 // 8: start pattern
+// nano slider 5 ratio
 ~shesme.coupler.end;
 ~shesme.coupler.applyPreset( \pattern );
 ~shesme.humming.end;
