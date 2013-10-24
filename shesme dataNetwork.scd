@@ -25,7 +25,7 @@
 	"cd '%/ssdn_python-master/pydon'; python metapydonhive.py"
 			.format( ~shesme.path.dirname ).runInTerminal;
 	*/
-	"cd '%/ssdn_python-master-2/pydon'; scripts/pydongui.py"
+	"cd '%/ssdn_python-master-3/pydon'; scripts/pydongui.py"
 		.format( ~shesme.path.dirname ).runInTerminal;
 };
 
