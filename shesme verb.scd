@@ -13,13 +13,14 @@
 ~shesme.verb.end = { |evt| q.verb.end; evt.active = false; };
 ~shesme.verb.active = { q.verb.active.booleanValue };
 
-/*
+
 // live setup
 ~shesme.verb.points = WFSPointGroup([ Point(-3.9423828125, -2.330859375), Point(-3.0865234375, 2.93359375), Point(-0.3, 5.0), Point(2.3982421875, 3.8634765625), Point(4.3759765625, 1.6984375), Point(5.6541015625, -1.7263671875), Point(-5.1078125, -2.242578125), Point(-4.044921875, 4.115234375), Point(3.0185546875, 4.16953125), Point(6.608203125, -2.238671875) ]);
-*/
 
+/*
 // installation zaandam
 ~shesme.verb.points = WFSPointGroup([ Point(-3.0, -4.0), Point(-3.0), Point(-3.0, 4.0), Point(3.0, 4.0), Point(3.0), Point(3.0, -4.0), Point(-4.0), Point(-4.0), Point(4.0), Point(4.0) ]);
+*/
 
 /*
 (
@@ -102,10 +103,10 @@ q.verb = q.verb ? EM();
 q.verb.font = Font( Font.defaultSansFace, 10 );
 
 q.verb.active = 0;
-q.verb.n = 4; // number of channels
+q.verb.n = 6; // number of channels
 q.verb.fftsize= 2048; 
 q.verb.amp = 0.1;
-q.verb.preDelay = 0;
+q.verb.preDelay = 0.003;
 q.verb.dur = 0.8;
 q.verb.leak = 0.33;
 q.verb.private = false;
@@ -118,48 +119,85 @@ q.verb.extra = 0;
 q.verb.offset = 22; // eucon slider
 
 (
-SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
-		fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1, quad = 1,
-		hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05, extra = 0|
-	var bufs = \bufs.ir( 0!q.verb.n );
-	var input, sig, env, ni = 6;
-	env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 2 ).kr(2, gate );
-	input = In.ar( 0 + (FirstPrivateBus.ir * private), ni );
-	//CheckBadValues.ar( input );
-	//input = input + WhiteNoise.ar(1.0e-9);
-	input = RemoveBadValues.ar(input);
-	extra = extra * input;
-	extra = Splay.ar( extra );
-	extra = DelayN.ar(extra, 0.25, preDelay + 0.02 );
-	input = if( quad,
-		input.collect({ |sig, i|
-			var xx;
-			xx = PanAz.ar( q.verb.n, sig, ~shesme.verb.panValuesQuad[i] / 4 * 2, orientation: 0 );
-			~shesme.verb.delays[i].collect({ |delay, ix|
-				DelayN.ar( xx[ix], delay, delay );
-			});
-		}).sum,
-		[ DC.ar(0) ] ++ input.collect({ |input, i|
-			var xx;
-			xx = Pan2.ar( input, ~shesme.verb.panValuesStereo[i]);
-			~shesme.verb.delays[i][[1,2]].collect({ |delay, ix|
-				DelayN.ar( xx[ix], delay, delay );
-			});
-		}).sum ++ [ DC.ar(0) ]
-	);
-	dry = dry * input * 4;
-	//dry = BHiCut.ar( dry, dryhicut, 1 );
-	//dry = BHiShelf.ar( dry, dryhicut, 1, -6);
-	dry = DelayN.ar(dry, 0.25, preDelay );
-	input = input + (input.sum * leak ) * env * amp ;
-	input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
-	input = BLowShelf.ar( input, lowshelfFreq, 1, lowshelf );
-	input = DelayN.ar(input, 0.25, preDelay );
-	sig = bufs.collect({ |sp, i| 
-		PartConv.ar(input[i], fftsize, sp, 0.5); 
-	});
-	Out.ar( out, (((sig * 1) + (dry * env)) * 0.5) ++ extra );
-}).load(s);
+if( q.verb.n != 6 ) {
+	SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
+			fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1, quad = 1,
+			hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05, extra = 0|
+		var bufs = \bufs.ir( 0!q.verb.n );
+		var input, sig, env, ni = 6;
+		env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 2 ).kr(2, gate );
+		input = In.ar( 0 + (FirstPrivateBus.ir * private), ni );
+		//CheckBadValues.ar( input );
+		//input = input + WhiteNoise.ar(1.0e-9);
+		input = RemoveBadValues.ar(input);
+		extra = extra * input;
+		extra = Splay.ar( extra );
+		extra = DelayN.ar(extra, 0.25, preDelay + 0.02 );
+		input = if( quad,
+			input.collect({ |sig, i|
+				var xx;
+				xx = PanAz.ar( q.verb.n, sig, ~shesme.verb.panValuesQuad[i] / 4 * 2, orientation: 0 );
+				~shesme.verb.delays[i].collect({ |delay, ix|
+					DelayN.ar( xx[ix], delay, delay );
+				});
+			}).sum,
+			[ DC.ar(0) ] ++ input.collect({ |input, i|
+				var xx;
+				xx = Pan2.ar( input, ~shesme.verb.panValuesStereo[i]);
+				~shesme.verb.delays[i][[1,2]].collect({ |delay, ix|
+					DelayN.ar( xx[ix], delay, delay );
+				});
+			}).sum ++ [ DC.ar(0) ]
+		);
+		dry = dry * input * 4;
+		//dry = BHiCut.ar( dry, dryhicut, 1 );
+		//dry = BHiShelf.ar( dry, dryhicut, 1, -6);
+		dry = DelayN.ar(dry, 0.25, preDelay );
+		input = input + (input.sum * leak ) * env * amp ;
+		input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
+		input = BLowShelf.ar( input, lowshelfFreq, 1, lowshelf );
+		input = DelayN.ar(input, 0.25, preDelay );
+		sig = bufs.collect({ |sp, i| 
+			PartConv.ar(input[i], fftsize, sp, 0.5); 
+		});
+		Out.ar( out, (((sig * 1) + (dry * env)) * 0.5) ++ extra );
+	}).load(s);
+} {	
+	// 6 channels: 1 speaker each
+	SynthDef( "ws_shesme_verb%".format( q.verb.n ), { |in = 0, amp = 0.33, preDelay = 0, out = 0, 
+			fftsize = 2048, private = 0, gate = 1, dry = 0, dryhicut = 400, pan = 1, quad = 1,
+			hishelf = -6, hishelfFreq = 3000, lowshelf = 0, lowshelfFreq = 600, leak = 0.05, extra = 0|
+		var bufs = \bufs.ir( 0!q.verb.n );
+		var input, sig, env, ni = 6;
+		env = Env([0,1,1,0,0], [0.1,0,0.1, BufDur.ir( bufs[0] ) + preDelay ], \lin, 2 ).kr(2, gate );
+		input = In.ar( 0 + (FirstPrivateBus.ir * private), ni );
+		//CheckBadValues.ar( input );
+		//input = input + WhiteNoise.ar(1.0e-9);
+		input = RemoveBadValues.ar(input);
+		extra = extra * input;
+		extra = Splay.ar( extra );
+		extra = DelayN.ar(extra, 0.25, preDelay + 0.02 );
+		input = if( quad,
+			input,
+			[ DC.ar(0), DC.ar(0) ] ++ input.collect({ |input, i|
+				Pan2.ar( input, ~shesme.verb.panValuesStereo[i]);
+			}).sum ++ [ DC.ar(0), DC.ar(0) ]
+		);
+		input = DelayN.ar(input, 0.25, preDelay );
+		dry = dry * input * 4;
+		//dry = BHiCut.ar( dry, dryhicut, 1 );
+		//dry = BHiShelf.ar( dry, dryhicut, 1, -6);
+		dry = DelayN.ar(dry, 0.25, preDelay );
+		input = input + (input.sum * leak ) * env * amp ;
+		input = BHiShelf.ar( input, hishelfFreq, 1, hishelf );
+		input = BLowShelf.ar( input, lowshelfFreq, 1, lowshelf );
+		sig = bufs.collect({ |sp, i| 
+			PartConv.ar(input[i], fftsize, sp, 0.5); 
+		});
+		Out.ar( out, (((sig * 1) + (dry * env)) * 0.5) ++ extra );
+	}).load(s);
+	
+};
 );
 
 q.verb.danStowel = {|evt| 
@@ -326,7 +364,7 @@ q.verb.views[ \extra ] = SmoothSlider(  q.verb.w, 94@16,  ).value_( q.verb.extra
 				
 StaticText( q.verb.w, 50@16 ).string_( "predelay" ).align_( \right ).font_( q.verb.font );
 q.verb.views[ \preDelay ] = SmoothNumberBox( q.verb.w, 40@16 ).value_( q.verb.preDelay ? 0)
-	.clipLo_( 0 ).clipHi_(0.25).step_(0.01).font_( q.verb.font )
+	.clipLo_( 0 ).clipHi_(0.25).step_(0.001).scroll_step_(0.001).font_( q.verb.font )
 	.action_({ |sl| 
 		q.verb.preDelay = sl.value;
 		q.verb.sn.set( \preDelay, q.verb.preDelay ); 
