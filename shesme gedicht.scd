@@ -23,7 +23,8 @@
 		*53.collect({ |i|
 			var chains;
 			var numSpeakers, busx;
-			numSpeakers = (i.linlin( 0, 52, 2,6 ).round(1) - 1).asInt;
+			//numSpeakers = (i.linlin( 0, 52, 2,6 ).round(1) - 1).asInt;
+			numSpeakers = 6;
 			busx = buses[..numSpeakers].scramble[..1];
 			chains = [  UChain( i * 2,
 					[ \bufSoundFile, 
