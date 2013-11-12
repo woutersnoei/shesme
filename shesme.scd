@@ -54,7 +54,7 @@
 
 ~shesme.loadBuffers( { "\n~shesme loading buffers done".postln; { ~shesme.doAfterLoad }.defer; } );
 
-MasterEQ(6);
+MasterEQ(12);
 
 // make window for loading documents
 ~shesme.makeFilesWindow = { |evt|
