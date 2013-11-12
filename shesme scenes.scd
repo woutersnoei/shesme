@@ -45,16 +45,21 @@ x = x.add({
 ~shesme.coupler.start;
 )
 
-
+/*
 ( // 3a: talking / silence
 ~shesme.coupler.end;
 ~shesme.tttt.end;
+~shesme.words.end;
 )
 
 ( // 3b: talking / words
 ~shesme.notes.amp = 0.05;
 ~shesme.notes.selection = [0,0.4];
 ~shesme.notes.start;
+)
+*/
+
+(
 ~shesme.words.applyPreset( \all );
 ~shesme.words.start;
 )
@@ -62,13 +67,15 @@ x = x.add({
  // 3c: talking / words
 ~shesme.words.applyPreset( \love );
 
+/*
 ( // 3d: talking / silence again
 ~shesme.notes.end;
 ~shesme.words.end;
 )
-
+*/
 
 ( // 4: open dress
+~shesme.words.end;
 ~shesme.coupler.end;
 ~shesme.tttt.end;
 ~shesme.notes.end;
@@ -264,6 +271,7 @@ x = {
 ( // 10c: baarmoeder start
 ~shesme.baarmoeder.amp = 0;
 ~shesme.baarmoeder.start;
+x = nil;
 x = x.add( { 
 	var dur = 60, amp = 0.05;
 	var spec = \amp.asSpec;
@@ -308,5 +316,5 @@ x = x.add({
 )
 
 ~shesme.baarmoeder.end;
-
+\\
 x.do(_.stop); x = nil;
