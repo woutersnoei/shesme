@@ -74,8 +74,8 @@ NanoKONTROL.sliders[0][8].action = { |sl|
 
 NanoKONTROL.knobs[0][8].action = { |kn| 
 	var env1, env2;
-	env1 = Env([-2, -0.16,0.832], [0.25,0.75] );
-	env2 = Env([2, -0.16,0.832], [0.25,0.75] );
+	env1 = Env([-2, -0.16,1.5], [0.25,0.75] );
+	env2 = Env([2, -0.16,1.5], [0.25,0.75] );
 	~shesme.sfr.pan = [ env1.at( kn.value ), env2.at( kn.value ) ];
 };
 
