@@ -26,7 +26,7 @@
 	~shesme.notes.applyPreset( \all_fast );
 	~shesme.words.amp = 0.3;
 	~shesme.quotes.applyPreset( \long_waitforactive );
-	~shesme.quotes.amp = 0.3;
+	~shesme.quotes.amp = 0.25;
 	~shesme.notes.applyPreset( \fade );
 	~shesme.notes.amp = 0.1;
 	~shesme.chords.amp = 0.1;
